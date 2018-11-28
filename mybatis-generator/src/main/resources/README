@@ -1,0 +1,12 @@
+使用MybatisGenerator v1.3.6 开发的生成mapper和DO的工具
+ * 用法:
+ * 1. 编辑 /conf/app.properties文件
+ * 2. 运行 java -jar mybatis-generator.jar
+ * 特点:
+ * 1. 用Integer来表示SQL的tinyint
+ * 2. 对关键字添加了分隔符
+ * 3. 查询条件类统一以Criteria结尾
+ * 注意:
+ * 1. create_time和update_time需要自己处理
+ * 2. 如果使用索引，需要手动调整查询的字段顺序
+ * 3. Mapper类要自己添加Spring注解

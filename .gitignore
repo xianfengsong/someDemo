@@ -1,0 +1,11 @@
+/.idea/
+*.iml
+*/target/
+/thrift-demo/
+/thrift-demo-api/
+/jmeter-rpc-tester/
+*/lib/
+log
+logs
+log.dir_IS_UNDEFINED
+log.history.dir_IS_UNDEFINED
