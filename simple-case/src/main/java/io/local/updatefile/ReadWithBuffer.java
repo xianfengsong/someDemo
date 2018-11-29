@@ -1,8 +1,12 @@
-package main.java.io.local.updatefile;
+package io.local.updatefile;
 
-import main.java.io.CommonConstants;
-
-import java.io.*;
+import io.CommonConstants;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * BufferedReader BufferedWriter修改文件

@@ -1,4 +1,4 @@
-package main.java.concurrent.collections;
+package concurrent.collections;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package main.java.io.local.updatefile;
+package io.local.updatefile;
 
 /**
  * Created by root on 18-3-1.

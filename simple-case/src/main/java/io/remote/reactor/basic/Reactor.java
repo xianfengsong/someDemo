@@ -1,8 +1,9 @@
-package main.java.io.remote.reactor.basic;
+package io.remote.reactor.basic;
 
-import main.java.io.Utils;
-import main.java.io.CommonConstants;
+import static io.CommonConstants.BUFFER_SIZE;
 
+import io.CommonConstants;
+import io.Utils;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -13,8 +14,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
-
-import static main.java.io.CommonConstants.BUFFER_SIZE;
 
 /**
  * reactor模式 基础版

@@ -1,12 +1,14 @@
-package main.java.concurrent.tools;
+package concurrent.tools;
 
-import main.java.concurrent.Test;
-import org.omg.PortableServer.THREAD_POLICY_ID;
-
-import java.util.*;
-import java.util.concurrent.*;
+import concurrent.Test;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**

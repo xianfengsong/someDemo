@@ -1,7 +1,11 @@
-package main.java.io.local;
+package io.local;
 
-import main.java.io.CommonConstants;
-import io.local.readfile.*;
+import io.CommonConstants;
+import io.local.readfile.BufferedStreamReader;
+import io.local.readfile.FilesReader;
+import io.local.readfile.InputStreamReader;
+import io.local.readfile.MappedReader;
+import io.local.readfile.RandomReader;
 import io.local.updatefile.MemoryMapping;
 import io.local.updatefile.ReadWithBuffer;
 

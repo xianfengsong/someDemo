@@ -1,11 +1,10 @@
-package main.java.cglib_test;
+package cglib_test;
 
-import org.springframework.cglib.beans.BeanCopier;
+import static java.lang.String.format;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.lang.String.format;
+import org.springframework.cglib.beans.BeanCopier;
 
 /**
  * 使用cglib的

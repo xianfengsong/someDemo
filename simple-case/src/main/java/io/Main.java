@@ -1,15 +1,14 @@
-package main.java.io;
+package io;
+
+import static io.CommonConstants.CLIENT_MODE;
+import static io.CommonConstants.SERVER_MODE;
 
 import io.remote.aio.AIOClient;
 import io.remote.aio.AIOServer;
 import io.remote.clients.NIOClient;
 import io.remote.reactor.multiple.MultiReactor;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static main.java.io.CommonConstants.CLIENT_MODE;
-import static main.java.io.CommonConstants.SERVER_MODE;
 
 /**
  * 网络io demo 入口

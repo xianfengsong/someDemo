@@ -1,13 +1,12 @@
-package main.java.concurrent.tools;
+package concurrent.tools;
 
-import main.java.concurrent.Test;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import concurrent.Test;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by root on 18-3-15.

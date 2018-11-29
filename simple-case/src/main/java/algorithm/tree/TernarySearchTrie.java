@@ -1,4 +1,4 @@
-package main.java.algorithm.tree;
+package algorithm.tree;
 
 import java.util.ArrayList;
 import java.util.List;

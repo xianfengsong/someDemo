@@ -1,4 +1,4 @@
-package main.java.jvm;
+package jvm;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;

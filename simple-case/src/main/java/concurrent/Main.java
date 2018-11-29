@@ -1,10 +1,15 @@
-package main.java.concurrent;
+package concurrent;
 
 
-import main.java.concurrent.collections.CurrentLinkQueueTest;
-import main.java.concurrent.collections.QueueThroughputTest;
-import main.java.concurrent.collections.UnThreadsafeCollectionTest;
-import concurrent.tools.*;
+import concurrent.collections.CurrentLinkQueueTest;
+import concurrent.collections.QueueThroughputTest;
+import concurrent.collections.UnThreadsafeCollectionTest;
+import concurrent.tools.CountDownLatchTest;
+import concurrent.tools.CyclicBarrierTest;
+import concurrent.tools.LockQueueStructure;
+import concurrent.tools.SemaphoreTest;
+import concurrent.tools.ThreadClassLoaderTest;
+import concurrent.tools.WaitNotify;
 
 public class Main {
     public static void main(String[] args) {

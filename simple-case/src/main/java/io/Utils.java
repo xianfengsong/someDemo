@@ -1,4 +1,4 @@
-package main.java.io;
+package io;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;

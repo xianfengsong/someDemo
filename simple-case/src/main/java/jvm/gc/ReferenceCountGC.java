@@ -1,4 +1,4 @@
-package main.java.jvm.gc;
+package jvm.gc;
 
 /**
  * 循环引用的对象是否会被回收

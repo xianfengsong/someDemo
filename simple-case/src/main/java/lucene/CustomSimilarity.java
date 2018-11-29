@@ -1,4 +1,4 @@
-package main.java.lucene;
+package lucene;
 
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 

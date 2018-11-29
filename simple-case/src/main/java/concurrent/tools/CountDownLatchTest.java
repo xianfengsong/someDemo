@@ -1,11 +1,14 @@
-package main.java.concurrent.tools;
-
-import main.java.concurrent.Test;
-
-import java.util.concurrent.*;
+package concurrent.tools;
 
 import static concurrent.tools.CountDownLatchTest.Judge.gameEndLatch;
 import static concurrent.tools.CountDownLatchTest.Judge.gameStartLatch;
+
+import concurrent.Test;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CountDownLatch测试

@@ -1,4 +1,4 @@
-package main.java.io.local.readfile;
+package io.local.readfile;
 
 import java.io.IOException;
 import java.nio.MappedByteBuffer;

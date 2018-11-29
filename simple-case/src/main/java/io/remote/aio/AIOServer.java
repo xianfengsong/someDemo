@@ -1,8 +1,7 @@
-package main.java.io.remote.aio;
+package io.remote.aio;
 
-import main.java.io.CommonConstants;
-import main.java.io.Utils;
-
+import io.CommonConstants;
+import io.Utils;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

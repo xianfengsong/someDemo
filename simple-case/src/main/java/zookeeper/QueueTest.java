@@ -1,5 +1,6 @@
-package main.java.zookeeper;
+package zookeeper;
 
+import java.util.UUID;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.api.CuratorListener;
@@ -9,10 +10,6 @@ import org.apache.curator.framework.recipes.queue.QueueConsumer;
 import org.apache.curator.framework.recipes.queue.QueueSerializer;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.utils.CloseableUtils;
-
-import java.io.Closeable;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class QueueTest {
 

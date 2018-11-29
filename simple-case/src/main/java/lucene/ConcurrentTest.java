@@ -1,19 +1,6 @@
-package main.java.lucene;
+package lucene;
 
 import com.chenlb.mmseg4j.analysis.ComplexAnalyzer;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.*;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TrackingIndexWriter;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.*;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.SimpleFSLockFactory;
-import org.apache.lucene.util.Version;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +9,30 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.LongField;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.index.TrackingIndexWriter;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.ControlledRealTimeReopenThread;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ReferenceManager;
+import org.apache.lucene.search.SearcherManager;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.SimpleFSLockFactory;
+import org.apache.lucene.util.Version;
 
 /**
  * Created by root on 18-3-22.
@@ -191,7 +202,7 @@ public class ConcurrentTest {
     private static IndexWriter getIndexWriter() throws IOException {
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_45, zh);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-        config.setSimilarity(new CustomSimilarity());
+        config.setSimilarity(new lucene.CustomSimilarity());
         config.setWriteLockTimeout(3 * 1000);
 
         File indexFile = new File(PATH);

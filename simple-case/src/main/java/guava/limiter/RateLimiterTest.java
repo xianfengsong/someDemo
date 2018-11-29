@@ -1,7 +1,6 @@
-package main.java.guava.limiter;
+package guava.limiter;
 
 import com.google.common.util.concurrent.RateLimiter;
-
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 

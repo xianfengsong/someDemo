@@ -1,4 +1,4 @@
-package main.java.algorithm.loadbalance;
+package algorithm.loadbalance;
 
 import java.util.HashMap;
 import java.util.Map;

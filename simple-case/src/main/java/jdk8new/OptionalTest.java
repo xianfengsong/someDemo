@@ -1,4 +1,4 @@
-package main.java.jdk8new;
+package jdk8new;
 
 import java.util.Arrays;
 import java.util.List;

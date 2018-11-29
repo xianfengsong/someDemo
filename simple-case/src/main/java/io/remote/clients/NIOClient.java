@@ -1,8 +1,9 @@
-package main.java.io.remote.clients;
+package io.remote.clients;
 
-import main.java.io.CommonConstants;
-import main.java.io.Utils;
+import static io.CommonConstants.BUFFER_SIZE;
 
+import io.CommonConstants;
+import io.Utils;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -12,8 +13,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
-
-import static main.java.io.CommonConstants.BUFFER_SIZE;
 
 /**
  * 通用的客户端

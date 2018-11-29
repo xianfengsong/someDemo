@@ -1,7 +1,6 @@
-package main.java.concurrent.tools;
+package concurrent.tools;
 
-import main.java.concurrent.Test;
-
+import concurrent.Test;
 import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.BrokenBarrierException;

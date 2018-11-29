@@ -1,6 +1,10 @@
-package main.java.io.local.readfile;
+package io.local.readfile;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.CRC32;
 
 /**

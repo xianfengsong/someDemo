@@ -1,6 +1,10 @@
-package main.java.mysql;
+package mysql;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Created by root on 18-3-29.

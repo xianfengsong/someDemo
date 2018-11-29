@@ -1,4 +1,4 @@
-package main.java.jvm;
+package jvm;
 
 import jvm.gc.ReferenceCountGC;
 

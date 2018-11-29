@@ -1,7 +1,6 @@
-package main.java.io.local.updatefile;
+package io.local.updatefile;
 
-import main.java.io.CommonConstants;
-
+import io.CommonConstants;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;

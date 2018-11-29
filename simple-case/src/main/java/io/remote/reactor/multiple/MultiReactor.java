@@ -1,8 +1,9 @@
-package main.java.io.remote.reactor.multiple;
+package io.remote.reactor.multiple;
 
-import main.java.io.CommonConstants;
-import main.java.io.Utils;
+import static io.CommonConstants.BUFFER_SIZE;
 
+import io.CommonConstants;
+import io.Utils;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -15,8 +16,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import static main.java.io.CommonConstants.BUFFER_SIZE;
 
 /**
  * 交给线程池处理数据

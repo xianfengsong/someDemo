@@ -1,7 +1,6 @@
-package main.java.concurrent.tools;
+package concurrent.tools;
 
-import main.java.concurrent.Test;
-
+import concurrent.Test;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

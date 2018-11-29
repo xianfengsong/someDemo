@@ -1,11 +1,11 @@
-package main.java.io.remote.classic;
+package io.remote.classic;
+
+import static io.CommonConstants.BUFFER_SIZE;
+import static io.CommonConstants.DEFAULT_PORT;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import static main.java.io.CommonConstants.BUFFER_SIZE;
-import static main.java.io.CommonConstants.DEFAULT_PORT;
 
 /**
  * @author root

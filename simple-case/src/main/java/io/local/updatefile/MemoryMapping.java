@@ -1,7 +1,6 @@
-package main.java.io.local.updatefile;
+package io.local.updatefile;
 
-import main.java.io.CommonConstants;
-
+import io.CommonConstants;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;

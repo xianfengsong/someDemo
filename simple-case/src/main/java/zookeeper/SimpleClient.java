@@ -1,13 +1,11 @@
-package main.java.zookeeper;
+package zookeeper;
 
 
-import org.apache.curator.RetryPolicy;
+import java.util.List;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.test.TestingServer;
-
-import java.util.List;
 
 /**
  * curator客户端测试

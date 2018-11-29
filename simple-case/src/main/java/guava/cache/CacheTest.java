@@ -1,9 +1,8 @@
-package main.java.guava.cache;
+package guava.cache;
 
 import com.google.common.base.Joiner;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
