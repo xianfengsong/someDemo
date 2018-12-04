@@ -10,12 +10,12 @@
     <version>1.0</version>
     <modules>
         <module>netty</module>
-        <module>thrift-demo</module>
+        <module>simple-case</module>
         <module>mongo-demo</module>
-        <module>mybatis</module>
+        <module>mybatis-generator</module>
         <module>restlet-demo</module>
         <module>hystrix-study</module>
-        <module>jmeter_rpc_tester</module>
+        <module>spring-boot-study</module>
     </modules>
 
     <properties>
@@ -40,6 +40,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.apache.curator</groupId>
@@ -58,25 +59,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>4.3.15.RELEASE</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <build>

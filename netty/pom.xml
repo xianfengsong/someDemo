@@ -42,10 +42,6 @@
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
         </dependency>
-        <dependency>
-            <groupId>nia</groupId>
-            <artifactId>utils</artifactId>
-        </dependency>
     </dependencies>
     <build>
         <pluginManagement>
