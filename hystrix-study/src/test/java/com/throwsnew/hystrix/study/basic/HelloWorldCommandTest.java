@@ -1,8 +1,9 @@
-package basic;
+package com.throwsnew.hystrix.study.basic;
 
-import basic.command.CommandHelloWorld;
+import com.throwsnew.hystrix.study.basic.command.CommandHelloWorld;
 import org.junit.Assert;
 import org.junit.Test;
+
 /**
  * author Xianfeng <br/>
  * date 18-10-10 下午4:42 <br/>

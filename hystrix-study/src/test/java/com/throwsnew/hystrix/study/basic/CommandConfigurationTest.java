@@ -1,9 +1,9 @@
-package basic;
+package com.throwsnew.hystrix.study.basic;
 
-import basic.configuration.CommandWithConfiguration;
 import com.netflix.hystrix.Hystrix;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
+import com.throwsnew.hystrix.study.basic.configuration.CommandWithConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

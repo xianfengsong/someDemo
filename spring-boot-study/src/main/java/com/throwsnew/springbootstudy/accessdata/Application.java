@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.domain.Example;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner {
@@ -22,6 +21,26 @@ public class Application implements CommandLineRunner {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * 保存 合并订单记录
+     *
+     * @param user
+     */
+    public void saveUser(User user) {
+        List<Order> oldOrders = repository.findOne(Example.of(user))
+                .map(User::getOrderList)
+                .orElse(Collections.emptyList());
+        List<Order> newOrders = user.getOrderList();
+        Map<String, Order> combineById = new LinkedHashMap<>();
+        for (Order newOrder : newOrders) {
+            combineById.put(newOrder.getId(), newOrder);
+        }
+        for (Order oldOrder : oldOrders) {
+            combineById.putIfAbsent(oldOrder.getId(), oldOrder);
+        }
+        user.setOrderList(new ArrayList<>(combineById.values()));
+        repository.save(user);
+    }
     @Override
     public void run(String... args) throws Exception {
 

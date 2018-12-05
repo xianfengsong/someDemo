@@ -1,10 +1,6 @@
-package basic.command;
+package com.throwsnew.hystrix.study.basic.command;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixThreadPoolKey;
-import com.netflix.hystrix.HystrixThreadPoolProperties;
+import com.netflix.hystrix.*;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesCommandDefault;
 
 /**

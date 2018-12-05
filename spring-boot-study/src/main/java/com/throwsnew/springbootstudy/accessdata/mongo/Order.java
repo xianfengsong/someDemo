@@ -3,9 +3,10 @@ package com.throwsnew.springbootstudy.accessdata.mongo;
 import java.util.Date;
 
 public class Order {
-    String id;
-    String info;
-    Date createTime;
+
+    private String id;
+    private String info;
+    private Date createTime;
 
     public String getId() {
         return id;
