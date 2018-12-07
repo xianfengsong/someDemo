@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.miui.global.browser.module.ad.interstitial.dao.mapper.InterstitialAdMapper">
-  <resultMap id="BaseResultMap" type="com.miui.global.browser.module.ad.interstitial.dao.model.InterstitialAdDO">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <resultMap _id="BaseResultMap"
+      type="com.miui.global.browser.module.ad.interstitial.dao.model.InterstitialAdDO">
+        <_id column="_id" jdbcType="BIGINT" property="_id"/>
     <result column="type" jdbcType="TINYINT" property="type" />
     <result column="region" jdbcType="VARCHAR" property="region" />
     <result column="app_version" jdbcType="VARCHAR" property="appVersion" />
@@ -15,7 +16,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
-  <sql id="Example_Where_Clause">
+    <sql _id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
         <if test="criteria.valid">
@@ -44,11 +45,13 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Base_Column_List">
-    `id`, `type`, `region`, `app_version`, `scale`, `reload`, `max_number`, `every_query`, 
+    <sql _id="Base_Column_List">
+    `_id`, `type`, `region`, `app_version`, `scale`, `reload`, `max_number`, `every_query`,
     `every_expose`, `first_show`, `create_time`, `update_time`
   </sql>
-  <select id="selectByExample" parameterType="com.miui.global.browser.module.ad.interstitial.dao.model.InterstitialAdDOCriteria" resultMap="BaseResultMap">
+    <select _id="selectByExample"
+      parameterType="com.miui.global.browser.module.ad.interstitial.dao.model.InterstitialAdDOCriteria"
+      resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -62,10 +65,10 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select _id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from browser_interstitial_ad
-    where `id` = #{id,jdbcType=BIGINT}
+        where `_id` = #{_id,jdbcType=BIGINT}
   </select>
 </mapper>
