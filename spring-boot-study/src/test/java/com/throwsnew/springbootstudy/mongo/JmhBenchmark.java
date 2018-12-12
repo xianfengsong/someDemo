@@ -1,20 +1,35 @@
 package com.throwsnew.springbootstudy.mongo;
 
+import static com.throwsnew.springbootstudy.mongo.MongoDataAccessTester.getOrders;
+
 import com.throwsnew.springbootstudy.accessdata.Application;
 import com.throwsnew.springbootstudy.accessdata.mongo.model.Order;
+import com.throwsnew.springbootstudy.accessdata.mongo.model.User;
 import com.throwsnew.springbootstudy.accessdata.mongo.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import org.junit.Assert;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import org.springframework.data.domain.Example;
 
 /**
  * author Xianfeng <br/>
@@ -42,27 +57,67 @@ public class JmhBenchmark {
             applicationContext.close();
         }
     }
+
+    /**
+     * 用findOne查询
+     * todo 禁用查询缓存
+     */
     @Benchmark
+    public void searchByUser() {
+        User user = new User();
+        user.setUserType("B");
+        Optional<User> result = repository.findOne(Example.of(user));
+        Assert.assertTrue(result.isPresent());
+    }
+
+    /**
+     * 用聚合查询 返回100条order
+     * todo 禁用查询缓存,选择不同的userId
+     */
+    @Benchmark
+    public void findByAggregation() {
+        String userId = "819687c5-eb76-4658-bc91-7ad1e41107e3";
+        String userType = "B";
+        User user = repository.findUser(userId, userType, System.currentTimeMillis(), 100);
+        if (user != null) {
+            Assert.assertEquals(100, user.getOrderList().size());
+            System.out.println(user.getName());
+        }
+    }
+
+    //    @Benchmark
     public void updateByPush() {
-        String userId = "1654fa48-98e1-44c3-92d3-d0122dfe7272";
+        String userId = "c4f428f7-692a-45b8-8d62-32b99b1e1c70";
         String userType = "B";
         List<Order> orders = getOrders(100);
-        orders.forEach(order -> order.setInfo("updated"));
+        orders.forEach(order -> order.setInfo("updateByPush"));
         repository.updateOrdersByPush(userId, userType, getOrders(100));
     }
 
-    private List<Order> getOrders(int size) {
-        List<Order> orders = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            Long time = System.currentTimeMillis();
-            Order order = new Order();
-            order.setCreateTime((time - time % size) + i);
-            order.setId("order" + i);
-            order.setInfo("Info:" + order.getId() + order.getCreateTime());
-            orders.add(order);
+    //    @Benchmark
+    public void updateByReplace() {
+        String userId = "17a79916-ce2b-4767-af2a-8e105669b209";
+        User example = new User();
+        example.setUserType("B");
+        example.setUserId(userId);
+        List<Order> oldOrders = repository.findOne(Example.of(example)).map(User::getOrderList)
+                .orElse(Collections.emptyList());
+        List<Order> newOrders = getOrders(100);
+        Map<String, Order> mapById = new HashMap<>();
+        for (Order order : oldOrders) {
+            mapById.put(order.getId(), order);
         }
-        return orders;
+        for (Order order : newOrders) {
+            order.setInfo("updateByReplace");
+            mapById.put(order.getId(), order);
+        }
+        List<Order> mergeOrders = new ArrayList<>(mapById.values());
+        mergeOrders.sort((o1, o2) -> o2.getCreateTime().compareTo(o1.getCreateTime()));
+        example.setOrderList(mergeOrders);
+        repository.save(example);
     }
+
+
     @Test
     public void run() throws RunnerException {
         Options opt = new OptionsBuilder()
