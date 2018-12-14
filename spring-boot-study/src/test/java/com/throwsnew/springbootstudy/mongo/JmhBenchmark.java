@@ -62,8 +62,8 @@ public class JmhBenchmark {
      * 用findOne查询
      * todo 禁用查询缓存
      */
-    @Benchmark
-    public void searchByUser() {
+//    @Benchmark
+    public void findOne() {
         User user = new User();
         user.setUserType("B");
         Optional<User> result = repository.findOne(Example.of(user));
@@ -74,7 +74,7 @@ public class JmhBenchmark {
      * 用聚合查询 返回100条order
      * todo 禁用查询缓存,选择不同的userId
      */
-    @Benchmark
+//    @Benchmark
     public void findByAggregation() {
         String userId = "819687c5-eb76-4658-bc91-7ad1e41107e3";
         String userType = "B";
@@ -85,18 +85,18 @@ public class JmhBenchmark {
         }
     }
 
-    //    @Benchmark
+    @Benchmark
     public void updateByPush() {
-        String userId = "c4f428f7-692a-45b8-8d62-32b99b1e1c70";
+        String userId = "2d8c6abf-7a59-40df-acd5-7c0144de82fb";
         String userType = "B";
         List<Order> orders = getOrders(100);
         orders.forEach(order -> order.setInfo("updateByPush"));
-        repository.updateOrdersByPush(userId, userType, getOrders(100));
+        repository.updateOrdersByPush(userId, userType, orders);
     }
 
     //    @Benchmark
     public void updateByReplace() {
-        String userId = "17a79916-ce2b-4767-af2a-8e105669b209";
+        String userId = "91886e2a-8cb9-487a-b083-e29ddb5cddc0";
         User example = new User();
         example.setUserType("B");
         example.setUserId(userId);
@@ -123,8 +123,8 @@ public class JmhBenchmark {
         Options opt = new OptionsBuilder()
                 .include(JmhBenchmark.class.getSimpleName())
                 .forks(1)
-                .warmupIterations(5)
-                .measurementIterations(5)
+                .warmupIterations(1)
+                .measurementIterations(1)
                 .build();
         new Runner(opt).run();
     }

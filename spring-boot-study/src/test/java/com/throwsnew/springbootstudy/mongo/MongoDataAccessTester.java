@@ -21,7 +21,7 @@ public class MongoDataAccessTester {
     UserRepository repository;
 
     private final static Integer ORDER_SIZE = 10000;
-    private final static Integer USER_NUMBER = 1000;
+    private final static Integer USER_NUMBER = 5000;
 
     @Test
     public void init() throws InterruptedException {
@@ -38,10 +38,15 @@ public class MongoDataAccessTester {
             if (i % 100 == 0) {
                 repository.saveAll(users);
                 users.clear();
-                Thread.sleep(1000L);
+                Thread.sleep(3000L);
                 System.out.println(i);
             }
         }
+    }
+
+    @Test
+    public void clear() {
+        repository.deleteAll();
     }
 
     private User getUser(String type, List<Order> orders) {

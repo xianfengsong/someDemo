@@ -76,17 +76,16 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
                 {orderList:{
                     _id:{$in:["1","2","3"]}
                 }}
-            })qq
+            })
         */
         List<String> ids = orderList.stream().map(Order::getId).collect(Collectors.toList());
         Query query = new Query();
-        query.addCriteria(Criteria.where("userId").is(userId)
-                .andOperator(Criteria.where("userType").is(userType)));
+        query.addCriteria(Criteria.where("userId").is(userId));
+        query.addCriteria(Criteria.where("userType").is(userType));
         Update updateOld = new Update();
-        updateOld.pull("orderList", Query.query(Criteria.where("id").in(
+        updateOld.pull("orderList", Query.query(Criteria.where("_id").in(
                 ids)));
-        UpdateResult pullResult = mongoTemplate
-                .updateFirst(query, updateOld, Order.class);
+        UpdateResult pullResult = mongoTemplate.updateFirst(query, updateOld, User.class);
 
         /*db.user.update(
             {"userId":"user9"},
@@ -95,13 +94,12 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             }}}
         )*/
         Update updateNew = new Update();
-        PushOperatorBuilder push = updateNew.push("histories");
+        PushOperatorBuilder push = updateNew.push("orderList");
         push.each(orderList);
         push.sort(new Sort(Direction.DESC, "createTime"));
         UpdateResult pushResult = mongoTemplate
-                .updateFirst(query, updateNew, Order.class);
+                .updateFirst(query, updateNew, User.class);
 
         Assert.isTrue(pullResult.wasAcknowledged() && pushResult.wasAcknowledged());
-
     }
 }
