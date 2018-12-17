@@ -7,6 +7,7 @@ import com.throwsnew.springbootstudy.accessdata.mongo.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,30 @@ public class MongoDataAccessTester {
                 System.out.println(i);
             }
         }
+    }
+
+    @Test
+    public void slice() {
+        User user = repository.findUserBySlice("2d8c6abf-7a59-40df-acd5-7c0144de82fb", "A", 100);
+        Assert.assertNotNull(user);
+    }
+
+    @Test
+    public void aggregation() {
+        User user = repository.findUserByAggr("1a196531-c519-4b58-a422-9c91717fe13e", "B",
+                System.currentTimeMillis(), 100);
+        Assert.assertNotNull(user);
+    }
+
+    @Test
+    public void updateByPush() {
+        String userId = "99999";
+        String userType = "C";
+        List<Order> orders = getOrders(100);
+        orders.forEach(order -> order.setInfo("updateByPush"));
+        repository.updateOrdersByPush(userId, userType, orders);
+        User result = repository.findUserByAggr(userId, userType, Long.MAX_VALUE, 100);
+        Assert.assertEquals(100, result.getOrderList().size());
     }
 
     @Test

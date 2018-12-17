@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,47 +57,53 @@ public class JmhBenchmark {
         }
     }
 
-    /**
-     * 用findOne查询
-     * todo 禁用查询缓存
-     */
+    @Test
+    public void run() throws RunnerException {
+        Options opt = new OptionsBuilder()
+                .include(JmhBenchmark.class.getSimpleName())
+                .forks(1)
+                .warmupIterations(2)
+                .measurementIterations(10)
+                .build();
+        new Runner(opt).run();
+    }
+
 //    @Benchmark
-    public void findOne() {
+public void findBySlice() {
         User user = new User();
-        user.setUserType("B");
-        Optional<User> result = repository.findOne(Example.of(user));
-        Assert.assertTrue(result.isPresent());
+    user.setUserId("dac6899b-6417-4e4b-8354-16acdc55a661");
+    user.setUserType("A");
+    User result = repository.findUserBySlice(user.getUserId(), user.getUserType(), 100);
+    Assert.assertNotNull(result);
     }
 
     /**
      * 用聚合查询 返回100条order
-     * todo 禁用查询缓存,选择不同的userId
      */
 //    @Benchmark
     public void findByAggregation() {
-        String userId = "819687c5-eb76-4658-bc91-7ad1e41107e3";
+        String userId = "063cb079-0118-4c8f-b121-4c702a229377";
         String userType = "B";
-        User user = repository.findUser(userId, userType, System.currentTimeMillis(), 100);
+        User user = repository.findUserByAggr(userId, userType, System.currentTimeMillis(), 100);
         if (user != null) {
             Assert.assertEquals(100, user.getOrderList().size());
-            System.out.println(user.getName());
         }
     }
 
     @Benchmark
     public void updateByPush() {
-        String userId = "2d8c6abf-7a59-40df-acd5-7c0144de82fb";
-        String userType = "B";
+        String userId = "81dc5e77-48b0-48a4-b76c-bc4091484573";
+        String userType = "A";
         List<Order> orders = getOrders(100);
-        orders.forEach(order -> order.setInfo("updateByPush"));
+        orders.forEach(order -> order.setInfo("updateByPush" + System.currentTimeMillis()));
         repository.updateOrdersByPush(userId, userType, orders);
     }
 
     //    @Benchmark
     public void updateByReplace() {
-        String userId = "91886e2a-8cb9-487a-b083-e29ddb5cddc0";
+        String userId = "06dc220e-fc5e-42e7-9060-9c5ded984ced";
         User example = new User();
-        example.setUserType("B");
+        example.setUserType("A");
         example.setUserId(userId);
         List<Order> oldOrders = repository.findOne(Example.of(example)).map(User::getOrderList)
                 .orElse(Collections.emptyList());
@@ -108,7 +113,7 @@ public class JmhBenchmark {
             mapById.put(order.getId(), order);
         }
         for (Order order : newOrders) {
-            order.setInfo("updateByReplace");
+            order.setInfo("updateByReplace" + System.currentTimeMillis());
             mapById.put(order.getId(), order);
         }
         List<Order> mergeOrders = new ArrayList<>(mapById.values());
@@ -118,14 +123,4 @@ public class JmhBenchmark {
     }
 
 
-    @Test
-    public void run() throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(JmhBenchmark.class.getSimpleName())
-                .forks(1)
-                .warmupIterations(1)
-                .measurementIterations(1)
-                .build();
-        new Runner(opt).run();
-    }
 }

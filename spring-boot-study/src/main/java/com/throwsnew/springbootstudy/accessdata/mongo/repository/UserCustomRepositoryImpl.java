@@ -3,6 +3,7 @@ package com.throwsnew.springbootstudy.accessdata.mongo.repository;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.limit;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwind;
 
 import com.mongodb.client.result.UpdateResult;
@@ -11,7 +12,6 @@ import com.throwsnew.springbootstudy.accessdata.mongo.model.User;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -31,12 +31,11 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     MongoTemplate mongoTemplate;
 
     @Override
-    public User findUser(String userId, String userType,
+    public User findUserByAggr(String userId, String userType,
             Long maxCreateTime, Integer size) {
 
-        MatchOperation matchUser = match(
-                Criteria.where("userId").is(userId)
-                        .andOperator(Criteria.where("userType").is(userType)));
+        MatchOperation matchUser = match(Criteria.where("userId").is(userId)
+                .and("userType").is(userType));
 
         GroupOperation groupOperation = group("_id")
                 .last("userType").as("userType")
@@ -53,6 +52,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         Aggregation aggregation = Aggregation.newAggregation(
                 matchUser,
                 unwind("orderList"),
+                sort(Direction.DESC, "orderList.createTime"),
                 matchCreateTime,
                 limit(size),
                 groupOperation
@@ -65,6 +65,15 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             return users.getMappedResults().get(0);
         }
     }
+
+    @Override
+    public User findUserBySlice(String userId, String userType, Integer size) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userId").is(userId).and("userType").is(userType));
+        query.fields().slice("orderList", size);
+        return mongoTemplate.findOne(query, User.class);
+    }
+
     /**
      * 更新用户订单 通过pull push更新order数组
      */
@@ -91,14 +100,19 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
             {"userId":"user9"},
             {$push:{orderList:{
                 $each:[{"id":"4"},{"id":"42"}]
-            }}}
+            }}},
+            {"upsert":true}
         )*/
         Update updateNew = new Update();
         PushOperatorBuilder push = updateNew.push("orderList");
         push.each(orderList);
-        push.sort(new Sort(Direction.DESC, "createTime"));
+        //push使用sort会让执行时间加倍
+//        push.sort(new Sort(Direction.DESC, "createTime"));
+        updateNew.set("userId", userId);
+        updateNew.set("userType", userType);
+        updateNew.set("userName", "name");
         UpdateResult pushResult = mongoTemplate
-                .updateFirst(query, updateNew, User.class);
+                .upsert(query, updateNew, User.class);
 
         Assert.isTrue(pullResult.wasAcknowledged() && pushResult.wasAcknowledged());
     }
