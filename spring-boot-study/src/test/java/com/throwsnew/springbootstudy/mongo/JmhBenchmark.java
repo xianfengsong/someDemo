@@ -1,5 +1,6 @@
 package com.throwsnew.springbootstudy.mongo;
 
+import static com.throwsnew.springbootstudy.mongo.MongoDataAccessTester.USER_TYPE;
 import static com.throwsnew.springbootstudy.mongo.MongoDataAccessTester.getOrders;
 
 import com.throwsnew.springbootstudy.accessdata.Application;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,6 +41,7 @@ import org.springframework.data.domain.Example;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Thread)
 public class JmhBenchmark {
+
     private UserRepository repository;
     private ConfigurableApplicationContext applicationContext;
 
@@ -71,20 +74,17 @@ public class JmhBenchmark {
 //    @Benchmark
 public void findBySlice() {
         User user = new User();
-    user.setUserId("dac6899b-6417-4e4b-8354-16acdc55a661");
-    user.setUserType("A");
+    user.setUserId(MongoDataAccessTester.randomUserId());
+    user.setUserType(USER_TYPE);
+
     User result = repository.findUserBySlice(user.getUserId(), user.getUserType(), 100);
     Assert.assertNotNull(result);
     }
 
-    /**
-     * 用聚合查询 返回100条order
-     */
 //    @Benchmark
     public void findByAggregation() {
-        String userId = "063cb079-0118-4c8f-b121-4c702a229377";
-        String userType = "B";
-        User user = repository.findUserByAggr(userId, userType, System.currentTimeMillis(), 100);
+        String userId = MongoDataAccessTester.randomUserId();
+        User user = repository.findUserByAggr(userId, USER_TYPE, System.currentTimeMillis(), 100);
         if (user != null) {
             Assert.assertEquals(100, user.getOrderList().size());
         }
@@ -92,20 +92,21 @@ public void findBySlice() {
 
     @Benchmark
     public void updateByPush() {
-        String userId = "81dc5e77-48b0-48a4-b76c-bc4091484573";
-        String userType = "A";
+        String userId = MongoDataAccessTester.randomUserId();
+
         List<Order> orders = getOrders(100);
         orders.forEach(order -> order.setInfo("updateByPush" + System.currentTimeMillis()));
-        repository.updateOrdersByPush(userId, userType, orders);
+        repository.updateOrdersByPush(userId, USER_TYPE, orders);
     }
 
     //    @Benchmark
     public void updateByReplace() {
-        String userId = "06dc220e-fc5e-42e7-9060-9c5ded984ced";
+        String userId = MongoDataAccessTester.randomUserId();
         User example = new User();
-        example.setUserType("A");
+        example.setUserType(USER_TYPE);
         example.setUserId(userId);
-        List<Order> oldOrders = repository.findOne(Example.of(example)).map(User::getOrderList)
+        Optional<User> oldUser = repository.findOne(Example.of(example));
+        List<Order> oldOrders = oldUser.map(User::getOrderList)
                 .orElse(Collections.emptyList());
         List<Order> newOrders = getOrders(100);
         Map<String, Order> mapById = new HashMap<>();
@@ -119,6 +120,7 @@ public void findBySlice() {
         List<Order> mergeOrders = new ArrayList<>(mapById.values());
         mergeOrders.sort((o1, o2) -> o2.getCreateTime().compareTo(o1.getCreateTime()));
         example.setOrderList(mergeOrders);
+        example.set_id(oldUser.map(User::get_id).orElse(null));
         repository.save(example);
     }
 

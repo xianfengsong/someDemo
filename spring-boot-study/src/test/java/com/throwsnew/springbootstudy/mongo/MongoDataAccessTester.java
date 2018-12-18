@@ -6,7 +6,7 @@ import com.throwsnew.springbootstudy.accessdata.mongo.model.User;
 import com.throwsnew.springbootstudy.accessdata.mongo.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +23,29 @@ public class MongoDataAccessTester {
 
     private final static Integer ORDER_SIZE = 10000;
     private final static Integer USER_NUMBER = 5000;
+    final static String USER_TYPE = "TYPE";
+    private final static Random RANDOM = new Random();
+
+    static List<Order> getOrders(int size) {
+        List<Order> orders = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            Long time = System.currentTimeMillis();
+            Order order = new Order();
+            order.setCreateTime((time - time % size) + i);
+            order.setId("order" + i);
+            order.setInfo("Info:" + order.getId() + order.getCreateTime());
+            orders.add(order);
+        }
+        return orders;
+    }
+
+    static String randomUserId() {
+        int id = RANDOM.nextInt(USER_NUMBER);
+        if (id == 0) {
+            id++;
+        }
+        return "u" + id;
+    }
 
     @Test
     public void init() throws InterruptedException {
@@ -30,11 +53,8 @@ public class MongoDataAccessTester {
         List<User> users = new ArrayList<>();
 
         for (int i = 1; i <= USER_NUMBER; i++) {
-            String type = "A";
-            if (i % 2 == 0) {
-                type = "B";
-            }
-            User user = getUser(type, orders);
+
+            User user = getUser("u" + i, orders);
             users.add(user);
             if (i % 100 == 0) {
                 repository.saveAll(users);
@@ -47,20 +67,31 @@ public class MongoDataAccessTester {
 
     @Test
     public void slice() {
-        User user = repository.findUserBySlice("2d8c6abf-7a59-40df-acd5-7c0144de82fb", "A", 100);
+        String userId = randomUserId();
+        System.out.println(userId);
+        User user = repository.findUserBySlice(userId, USER_TYPE, 100);
+
         Assert.assertNotNull(user);
     }
 
     @Test
+    public void clear() {
+        repository.deleteAll();
+    }
+
+    @Test
     public void aggregation() {
-        User user = repository.findUserByAggr("1a196531-c519-4b58-a422-9c91717fe13e", "B",
+        String userId = randomUserId();
+        System.out.println(userId);
+
+        User user = repository.findUserByAggr(userId, USER_TYPE,
                 System.currentTimeMillis(), 100);
         Assert.assertNotNull(user);
     }
 
     @Test
     public void updateByPush() {
-        String userId = "99999";
+        String userId = randomUserId();
         String userType = "C";
         List<Order> orders = getOrders(100);
         orders.forEach(order -> order.setInfo("updateByPush"));
@@ -69,30 +100,21 @@ public class MongoDataAccessTester {
         Assert.assertEquals(100, result.getOrderList().size());
     }
 
-    @Test
-    public void clear() {
-        repository.deleteAll();
-    }
-
-    private User getUser(String type, List<Order> orders) {
+    private User getUser(String id, List<Order> orders) {
         User user = new User();
-        user.setUserId(UUID.randomUUID().toString());
-        user.setUserType(type);
+        user.setUserId(id);
+        user.setUserType(USER_TYPE);
         user.setName("user" + System.currentTimeMillis());
         user.setOrderList(orders);
         return user;
     }
 
-    public static List<Order> getOrders(int size) {
-        List<Order> orders = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            Long time = System.currentTimeMillis();
-            Order order = new Order();
-            order.setCreateTime((time - time % size) + i);
-            order.setId("order" + i);
-            order.setInfo("Info:" + order.getId() + order.getCreateTime());
-            orders.add(order);
+    @Test
+    public void t() {
+        int i = 0;
+        while (i < USER_NUMBER) {
+            System.out.println(RANDOM.nextInt(USER_NUMBER));
+            i++;
         }
-        return orders;
     }
 }

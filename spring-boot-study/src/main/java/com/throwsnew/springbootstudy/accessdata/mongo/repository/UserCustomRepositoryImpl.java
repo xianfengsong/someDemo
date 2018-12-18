@@ -30,6 +30,28 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    /**
+     * 聚合查询
+     * db.user.aggregate([
+     * {"$match" : { "userId" : "063cb079-0118-4c8f-b121-4c702a229377", "userType" : "B" }},
+     * { "$unwind" : "$orderList" },
+     * { "$match" : { "orderList.createTime" : { "$lte" :  1545030349990}}},
+     * { "$sort" : { "orderList.createTime" : -1 } },
+     * {"$limit" : 100},
+     * { "$group" : {
+     * "_id" : "$_id",
+     * "userType" : { "$last" : "$userType" },
+     * "userId" : { "$last" : "$userId" },
+     * "name" : { "$last" : "$name" },
+     * "orderList" : { "$push" : "$orderList" }
+     * }}
+     * ])
+     *
+     * @param userId userId
+     * @param userType userType
+     * @param maxCreateTime maxCreateTime
+     * @param size 订单分页
+     */
     @Override
     public User findUserByAggr(String userId, String userType,
             Long maxCreateTime, Integer size) {
@@ -52,8 +74,8 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         Aggregation aggregation = Aggregation.newAggregation(
                 matchUser,
                 unwind("orderList"),
-                sort(Direction.DESC, "orderList.createTime"),
                 matchCreateTime,
+                sort(Direction.DESC, "orderList.createTime"),
                 limit(size),
                 groupOperation
         );
@@ -92,6 +114,8 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         query.addCriteria(Criteria.where("userId").is(userId));
         query.addCriteria(Criteria.where("userType").is(userType));
         Update updateOld = new Update();
+
+
         updateOld.pull("orderList", Query.query(Criteria.where("_id").in(
                 ids)));
         UpdateResult pullResult = mongoTemplate.updateFirst(query, updateOld, User.class);
