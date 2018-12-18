@@ -1,5 +1,6 @@
 package com.throwsnew.springbootstudy.mongo;
 
+import com.alibaba.fastjson.JSON;
 import com.throwsnew.springbootstudy.accessdata.Application;
 import com.throwsnew.springbootstudy.accessdata.mongo.model.Order;
 import com.throwsnew.springbootstudy.accessdata.mongo.model.User;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -74,6 +76,13 @@ public class MongoDataAccessTester {
         Assert.assertNotNull(user);
     }
 
+    @Test
+    public void one() {
+        User example = new User();
+        example.setUserId("u1");
+        User user = repository.findOne(Example.of(example)).orElse(new User());
+        System.out.println(JSON.toJSONString(user, false).getBytes().length / 1024 + "kb");
+    }
     @Test
     public void clear() {
         repository.deleteAll();

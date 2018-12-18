@@ -71,17 +71,17 @@ public class JmhBenchmark {
         new Runner(opt).run();
     }
 
-//    @Benchmark
-public void findBySlice() {
+    //    @Benchmark
+    public void findBySlice() {
         User user = new User();
-    user.setUserId(MongoDataAccessTester.randomUserId());
-    user.setUserType(USER_TYPE);
+        user.setUserId(MongoDataAccessTester.randomUserId());
+        user.setUserType(USER_TYPE);
 
-    User result = repository.findUserBySlice(user.getUserId(), user.getUserType(), 100);
-    Assert.assertNotNull(result);
+        User result = repository.findUserBySlice(user.getUserId(), user.getUserType(), 100);
+        Assert.assertNotNull(result);
     }
 
-//    @Benchmark
+    @Benchmark
     public void findByAggregation() {
         String userId = MongoDataAccessTester.randomUserId();
         User user = repository.findUserByAggr(userId, USER_TYPE, System.currentTimeMillis(), 100);
@@ -90,7 +90,7 @@ public void findBySlice() {
         }
     }
 
-    @Benchmark
+    //        @Benchmark
     public void updateByPush() {
         String userId = MongoDataAccessTester.randomUserId();
 
@@ -99,7 +99,7 @@ public void findBySlice() {
         repository.updateOrdersByPush(userId, USER_TYPE, orders);
     }
 
-    //    @Benchmark
+    //        @Benchmark
     public void updateByReplace() {
         String userId = MongoDataAccessTester.randomUserId();
         User example = new User();
