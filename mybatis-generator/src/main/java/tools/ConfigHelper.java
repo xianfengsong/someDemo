@@ -28,14 +28,14 @@ public class ConfigHelper {
         String appConfigPath = "";
         try {
             appConfigPath =
-                    System.getProperty("user.dir") + "/mybatis/src/main/resources/app.properties";
+                    System.getProperty("user.dir")
+                            + "/mybatis-generator/src/main/resources/app.properties";
             appProps.load(new FileInputStream(appConfigPath));
         } catch (IOException e) {
             System.out.println("配置加载失败,configPath:" + appConfigPath);
             e.printStackTrace();
         }
     }
-
     /**
      * 获得数据库连接配置
      */
