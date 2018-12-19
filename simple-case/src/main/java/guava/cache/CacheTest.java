@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Xianfeng
- * E-Mail: songxianfeng@xiaomi.com
+ * E-Mail:
  * Date: 18-8-8 下午5:32
  * Desc:
  */
