@@ -9,4 +9,4 @@ log
 logs
 log.dir_IS_UNDEFINED
 log.history.dir_IS_UNDEFINED
-mybatis-generator/src/main/resources/app.properties
+/mybatis-generator/src/main/resources/app.properties
