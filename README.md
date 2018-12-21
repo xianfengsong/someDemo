@@ -1,2 +1,2 @@
 # someDemo
-demo for study xxx test
+demo for study & test 
