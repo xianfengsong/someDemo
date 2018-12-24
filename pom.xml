@@ -11,11 +11,11 @@
     <modules>
         <module>netty</module>
         <module>simple-case</module>
-        <module>mongo-demo</module>
         <module>mybatis-generator</module>
         <module>restlet-demo</module>
         <module>hystrix-study</module>
         <module>spring-boot-study</module>
+        <module>design-pattern</module>
     </modules>
 
     <properties>
