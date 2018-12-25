@@ -13,10 +13,8 @@ import java.util.Observable;
  */
 public class NewsCenter extends Observable {
 
-    private News news;
-
     public void setNews(News news) {
-        this.news = news;
+        //主动变更状态
         setChanged();
         //同步通知每个观察者，可能被阻塞
         notifyObservers(news);

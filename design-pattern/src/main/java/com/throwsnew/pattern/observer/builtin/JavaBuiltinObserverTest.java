@@ -2,6 +2,7 @@ package com.throwsnew.pattern.observer.builtin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Observer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +15,9 @@ import org.junit.Test;
  */
 public class JavaBuiltinObserverTest {
 
+    /**
+     * 为了验证输出内容
+     **/
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 
     @Before
@@ -40,6 +44,28 @@ public class JavaBuiltinObserverTest {
 
         newsCenter.setNews(newsOne);
         Assert.assertEquals("sport news", outContent.toString());
+    }
+
+    @Test
+    public void block() {
+        Reporter reporter = new Reporter("sport");
+        //update方法如果是同步执行 会阻塞后面的观察者
+        Observer blockObserver = (o, arg) -> {
+            try {
+                Thread.sleep(3000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        NewsCenter newsCenter = new NewsCenter();
+        newsCenter.addObserver(blockObserver);
+        newsCenter.addObserver(reporter);
+
+        News newsOne = new News("sport", "sport news");
+        Long start = System.currentTimeMillis();
+        newsCenter.setNews(newsOne);
+        Long time = System.currentTimeMillis() - start;
+        Assert.assertTrue(time >=3000L);
     }
 
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.junit.Test</OriginalElement>
+  <nodes>
+    <node x="147.45833333333334" y="0.0">java.util.Observer</node>
+    <node x="335.0" y="613.0">com.throwsnew.pattern.observer.builtin.NewsCenter</node>
+    <node x="216.5125" y="120.0">java.util.Observable</node>
+    <node x="0.0" y="582.0">com.throwsnew.pattern.observer.builtin.Reporter</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="java.util.Observer" target="java.util.Observable">
+      <point x="118.125" y="35.0" />
+      <point x="423.08333333333337" y="95.0" />
+      <point x="467.3458333333333" y="95.0" />
+      <point x="100.3333333333333" y="-201.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.observer.builtin.NewsCenter" target="java.util.Observable">
+      <point x="-57.75" y="-35.0" />
+      <point x="392.75" y="562.0" />
+      <point x="404.6375" y="562.0" />
+      <point x="37.625" y="201.0" />
+    </edge>
+    <edge source="java.util.Observable" target="java.util.Observer">
+      <point x="0.0" y="-201.0" />
+      <point x="367.0125" y="95.0" />
+      <point x="344.33333333333337" y="95.0" />
+      <point x="39.375" y="35.0" />
+    </edge>
+    <edge source="java.util.Observable" target="java.util.Observable">
+      <point x="-112.875" y="201.0" />
+      <point x="254.1375" y="542.0" />
+      <point x="196.5125" y="542.0" />
+      <point x="196.5125" y="321.0" />
+      <point x="-150.5" y="-0.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.observer.builtin.Reporter" target="java.util.Observable">
+      <point x="78.75" y="-66.0" />
+      <point x="236.25" y="562.0" />
+      <point x="329.3875" y="562.0" />
+      <point x="-37.625" y="201.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.observer.builtin.Reporter" target="java.util.Observer">
+      <point x="-78.75" y="-66.0" />
+      <point x="78.75" y="95.0" />
+      <point x="186.83333333333334" y="95.0" />
+      <point x="-118.125" y="35.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="294.0" y="357.0" />
+  <SelectedNodes>
+    <node>com.throwsnew.pattern.observer.builtin.NewsCenter</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Constructors</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
