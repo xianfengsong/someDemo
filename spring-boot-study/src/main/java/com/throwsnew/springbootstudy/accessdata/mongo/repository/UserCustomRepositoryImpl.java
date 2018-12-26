@@ -32,20 +32,20 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     /**
      * 聚合查询
-     * db.user.aggregate([
-     * {"$match" : { "userId" : "063cb079-0118-4c8f-b121-4c702a229377", "userType" : "B" }},
-     * { "$unwind" : "$orderList" },
-     * { "$match" : { "orderList.createTime" : { "$lte" :  1545030349990}}},
-     * { "$sort" : { "orderList.createTime" : -1 } },
-     * {"$limit" : 100},
-     * { "$group" : {
-     * "_id" : "$_id",
-     * "userType" : { "$last" : "$userType" },
-     * "userId" : { "$last" : "$userId" },
-     * "name" : { "$last" : "$name" },
-     * "orderList" : { "$push" : "$orderList" }
-     * }}
-     * ])
+     db.user.aggregate([
+     {"$match" : { "userId" : "u1", "userType" : "TYPE" }},
+     { "$unwind" : "$orderList" },
+     { "$match" : { "orderList.createTime" : { "$lte" :  1545030349990}}},
+     { "$sort" : { "orderList.createTime" : -1 } },
+     {"$limit" : 100},
+     { "$group" : {
+     "_id" : "$_id",
+     "userType" : { "$last" : "$userType" },
+     "userId" : { "$last" : "$userId" },
+     "name" : { "$last" : "$name" },
+     "orderList" : { "$push" : "$orderList" }
+     }}
+     ])
      *
      * @param userId userId
      * @param userType userType
@@ -122,9 +122,13 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
         /*db.user.update(
             {"userId":"user9"},
-            {$push:{orderList:{
-                $each:[{"id":"4"},{"id":"42"}]
-            }}},
+            {
+                $push:{orderList:{$each:[{"id":"4"},{"id":"42"}]}},
+                "$set":{
+                    "userId":"user9",
+                    "userType":"C",
+                    "userName":"name"}
+            },
             {"upsert":true}
         )*/
         Update updateNew = new Update();
