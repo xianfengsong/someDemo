@@ -1,4 +1,4 @@
-package io.remote.clients;
+package io.niotest.clients;
 
 import static io.CommonConstants.BUFFER_SIZE;
 
@@ -19,7 +19,8 @@ import java.util.Set;
  */
 public class NIOClient implements Runnable {
 
-    final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(CommonConstants.DEFAULT_PORT);
+    final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(
+            CommonConstants.DEFAULT_PORT);
     Selector selector;
     SocketChannel channel;
 
@@ -31,7 +32,6 @@ public class NIOClient implements Runnable {
 
         channel.register(selector, SelectionKey.OP_CONNECT);
         channel.connect(SERVER_ADDR);
-        System.out.println("发起连接");
     }
 
     public void run() {
@@ -58,15 +58,14 @@ public class NIOClient implements Runnable {
             if (channel.isConnectionPending()) {
                 channel.finishConnect();
             }
-            System.out.println("连接建立");
-            String msg="hello, i am "+Thread.currentThread().getName();
-            ByteBuffer sendBuffer=Utils.uft8Encoder.encode(CharBuffer.wrap(msg));
-            int count=channel.write(sendBuffer);
-            if(count==msg.length()){
+            String msg = "hello, i am " + Thread.currentThread().getName();
+            ByteBuffer sendBuffer = Utils.uft8Encoder.encode(CharBuffer.wrap(msg));
+            int count = channel.write(sendBuffer);
+            if (count == msg.length()) {
                 channel.shutdownOutput();
-                System.out.println("发送"+msg);
-            }else{
-                System.out.println("发送失败");
+                System.out.println("send:" + msg);
+            } else {
+                System.out.println("send fail");
             }
             channel.register(selector, SelectionKey.OP_READ);
             selector.wakeup();
@@ -84,9 +83,10 @@ public class NIOClient implements Runnable {
                 }
                 //读取前翻转
                 input.flip();
-                if(input.limit()!=0){
-                CharBuffer charBuffer = Utils.uft8Decoder.decode(input);
-                System.out.println("recv:"+charBuffer);}
+                if (input.limit() != 0) {
+                    CharBuffer charBuffer = Utils.uft8Decoder.decode(input);
+                    System.out.println("recv:" + charBuffer);
+                }
             }
         }
 

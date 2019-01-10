@@ -1,4 +1,4 @@
-package io.remote.reactor.basic;
+package io.niotest.reactor.basic;
 
 import static io.CommonConstants.BUFFER_SIZE;
 

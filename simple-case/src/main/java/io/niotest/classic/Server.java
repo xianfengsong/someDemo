@@ -1,4 +1,4 @@
-package io.remote.classic;
+package io.niotest.classic;
 
 import static io.CommonConstants.BUFFER_SIZE;
 import static io.CommonConstants.DEFAULT_PORT;
