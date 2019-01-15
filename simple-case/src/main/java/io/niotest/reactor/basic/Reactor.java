@@ -38,9 +38,9 @@ public class Reactor implements Runnable {
         try {
             while (!Thread.interrupted()) {
                 selector.select();
-                Set selected = selector.selectedKeys();
-                for (Object aSelected : selected) {
-                    dispatch((SelectionKey) aSelected);
+                Set<SelectionKey> selected = selector.selectedKeys();
+                for (SelectionKey aSelected : selected) {
+                    dispatch(aSelected);
                 }
                 selected.clear();
             }
