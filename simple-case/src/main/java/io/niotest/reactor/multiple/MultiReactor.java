@@ -1,6 +1,7 @@
 package io.niotest.reactor.multiple;
 
 import io.CommonConstants;
+import io.niotest.reactor.handler.Handler;
 import io.niotest.reactor.handler.IOHandler;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,7 +10,6 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -45,18 +45,15 @@ public class MultiReactor implements Runnable {
             while (!Thread.interrupted()) {
                 selectorMain.select();
                 Set<SelectionKey> selected = selectorMain.selectedKeys();
-                Iterator it = selected.iterator();
-                while (it.hasNext()) {
-                    dispatch((SelectionKey) it.next());
+                for (SelectionKey aSelected : selected) {
+                    dispatch(aSelected);
                 }
 
                 for (Selector subSelector : selectors) {
                     subSelector.select(100L);
                     Set<SelectionKey> subSet = subSelector.selectedKeys();
-                    Iterator sit = subSet.iterator();
-
-                    while (sit.hasNext()) {
-                        dispatch((SelectionKey) sit.next());
+                    for (SelectionKey aSubSet : subSet) {
+                        dispatch(aSubSet);
                     }
                     subSet.clear();
                 }
@@ -67,8 +64,8 @@ public class MultiReactor implements Runnable {
         }
     }
 
-    void dispatch(SelectionKey key) {
-        Runnable handler = (Runnable) (key.attachment());
+    private void dispatch(SelectionKey key) {
+        Handler handler = (Handler) (key.attachment());
         if (handler != null) {
             //怎么是串行的？
             handler.run();
@@ -76,7 +73,7 @@ public class MultiReactor implements Runnable {
     }
 
     //连接事件处理类
-    class Acceptor implements Runnable {
+    class Acceptor implements Handler {
 
         @Override
         public synchronized void run() {

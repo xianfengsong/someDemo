@@ -7,5 +7,8 @@ package io.niotest.reactor.handler;
  */
 public interface Handler {
 
+    /**
+     * 处理当前连接事件
+     */
     void run();
 }

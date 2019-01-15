@@ -19,10 +19,10 @@ import java.util.Set;
  */
 public class NIOClient implements Runnable {
 
-    final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(
+    private final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(
             CommonConstants.DEFAULT_PORT);
-    Selector selector;
-    SocketChannel channel;
+    private Selector selector;
+    private SocketChannel channel;
 
     public NIOClient() throws IOException {
         selector = Selector.open();
@@ -34,6 +34,7 @@ public class NIOClient implements Runnable {
         channel.connect(SERVER_ADDR);
     }
 
+    @Override
     public void run() {
         try {
             while (!Thread.interrupted()) {
@@ -51,7 +52,7 @@ public class NIOClient implements Runnable {
         }
     }
 
-    void dispatch(SelectionKey key) throws IOException {
+    private void dispatch(SelectionKey key) throws IOException {
         if (key.isConnectable()) {
 
             SocketChannel channel = (SocketChannel) key.channel();

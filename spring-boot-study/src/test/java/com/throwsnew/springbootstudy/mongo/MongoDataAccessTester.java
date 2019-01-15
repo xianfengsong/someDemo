@@ -23,8 +23,8 @@ public class MongoDataAccessTester {
     @Autowired
     UserRepository repository;
 
-    private final static Integer ORDER_SIZE = 10000;
-    private final static Integer USER_NUMBER = 5000;
+    private final static Integer ORDER_SIZE = 100;
+    private final static Integer USER_NUMBER = 200;
     final static String USER_TYPE = "TYPE";
     private final static Random RANDOM = new Random();
 
