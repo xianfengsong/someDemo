@@ -1,29 +1,28 @@
 package echo;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import java.nio.charset.Charset;
 
 /**
  * 客户端 i/o handler
  * 接收数据类型 设置为 ByteBuf
  */
-@ChannelHandler.Sharable
-public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+public class EchoClientHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 处理connect事件
      * 连接成功就发送数据
      * @param ctx
-     * @throws Exception
      */
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("Netty is Easy!", CharsetUtil.UTF_8));
-
+    public void channelActive(ChannelHandlerContext ctx) {
+        ByteBuf buf = ctx.alloc().buffer();
+        buf.writeBytes("AA".getBytes(Charset.forName("utf-8")));
+        ctx.channel().writeAndFlush(buf);
+        System.out.println("send msg");
     }
 
     /**
@@ -31,11 +30,13 @@ public class EchoClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
      * 数据在这会被释放掉
      * @param ctx
      * @param msg
-     * @throws Exception
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-        System.out.println("Client Receive:"+msg.toString(CharsetUtil.UTF_8));
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        if (msg != null) {
+            ByteBuf buf = (ByteBuf) msg;
+            System.out.println("Client Receive:" + buf.toString(CharsetUtil.UTF_8));
+        }
     }
 
     @Override
