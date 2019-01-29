@@ -32,7 +32,7 @@ public class EchoClient {
                         ch.pipeline().addLast(new EchoClientHandler());
                     }
                 });
-        //熟悉的connect() 阻塞的
+        //熟悉的connect() 异步的
         bootstrap.connect(HOST, PORT).addListener(future -> {
             if (future.isSuccess()) {
                 System.out.println("connected");

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.CharsetUtil;
+import java.nio.charset.Charset;
 
 /**
  * Server端 i/o handler
@@ -20,8 +21,9 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
         System.out.println("read");
         ByteBuf buf = (ByteBuf) msg;
         System.out.println("Server receive:" + buf.toString(CharsetUtil.UTF_8));
-        //直接写回channel上下文（异步写），这次读取结束
-//        ctx.write(msg);
+        buf = ctx.alloc().buffer();
+        buf.writeBytes("Server response: BBB".getBytes(Charset.forName("utf-8")));
+        ctx.writeAndFlush(buf);
     }
 
     /**
@@ -42,9 +44,9 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
      * @param cause
      * @throws Exception
      */
-//    @Override
-//    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        cause.printStackTrace();
-//        ctx.close();
-//    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
+    }
 }
