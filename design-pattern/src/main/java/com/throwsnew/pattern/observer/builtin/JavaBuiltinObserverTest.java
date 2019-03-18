@@ -32,8 +32,9 @@ public class JavaBuiltinObserverTest {
 
     @Test
     public void test() {
-
+        //体育记者
         Reporter sportReporter = new Reporter("sport");
+        //香港记者（跑的更快）
         Reporter hkReporter = new Reporter("Hong Kong");
 
         News newsOne = new News("sport", "sport news");
