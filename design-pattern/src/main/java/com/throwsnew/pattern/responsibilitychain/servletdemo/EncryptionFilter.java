@@ -17,13 +17,15 @@ public class EncryptionFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        System.out.println("EncryptionFilter init");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
+        System.out.println(this.getClass().getSimpleName() + "\tworking");
+        chain.doFilter(request, response);
+        System.out.println(this.getClass().getSimpleName() + "\tfinish: ***");
     }
 
     @Override

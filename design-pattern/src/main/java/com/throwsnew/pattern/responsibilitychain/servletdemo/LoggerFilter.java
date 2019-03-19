@@ -18,13 +18,20 @@ public class LoggerFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        System.out.println("LoggerFilter init");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+        request.setAttribute("begin_mills", System.currentTimeMillis());
+        System.out.println(this.getClass().getSimpleName() + "\tworking");
+        chain.doFilter(request, response);
+
+        long startMills = (long) request.getAttribute("begin_mills");
+        System.out.println(String.format(this.getClass().getSimpleName() + "\t finish: log{runtime:%dms}",
+                System.currentTimeMillis() - startMills));
     }
 
     @Override

@@ -7,6 +7,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import org.springframework.util.StringUtils;
 
 /**
  * author Xianfeng <br/>
@@ -15,15 +16,23 @@ import javax.servlet.ServletResponse;
  */
 public class AuthFilter implements Filter {
 
+    FilterConfig filterConfig;
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        this.filterConfig = filterConfig;
+        System.out.println("AuthFilter init");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
+        String userName = (String) request.getAttribute("name");
+        if (StringUtils.isEmpty(userName)) {
+            System.out.println(this.getClass().getSimpleName() + "user auth fail!");
+        } else {
+            System.out.println(this.getClass().getSimpleName() + " auth success!");
+            chain.doFilter(request, response);
+        }
     }
 
     @Override
