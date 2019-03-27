@@ -6,7 +6,6 @@ import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
 import com.throwsnew.hystrix.study.basic.configuration.CommandWithConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
 
 /**
  * author Xianfeng <br/>
@@ -41,7 +40,7 @@ public class CommandConfigurationTest {
     /**
      * 命令执行超时触发熔断（同样受窗口时间 请求阈值的限制）
      */
-    @Test
+//    @Test
     public void testTimeout() throws InterruptedException {
         int runTime = timeout + 10;
         CommandWithConfiguration command = new CommandWithConfiguration(setter, runTime, true);
@@ -64,7 +63,7 @@ public class CommandConfigurationTest {
     /**
      * 在窗口时间内 执行的请求数超过阈值 且 失败占比超过限制 会触发熔断
      */
-    @Test
+//    @Test
     public void testRequestVolume() {
         // 请求次数超过阈值
         int requestNumber = requestVolume * 2;
@@ -86,11 +85,10 @@ public class CommandConfigurationTest {
     /**
      * 熔断器打开后 在经过 sleepWindowInMilliseconds，变成半开状态，重新判断是否还要打开
      */
-    @Test
+//    @Test
     public void testSleepWindow() throws InterruptedException {
         //触发熔断开关
         HystrixCommand<String> cmd = new CommandWithConfiguration(setter, 0, false);
-        ;
         for (int execTimes = 1; execTimes < requestVolume + 5; execTimes++) {
             cmd = new CommandWithConfiguration(setter, 0, false);
             cmd.execute();

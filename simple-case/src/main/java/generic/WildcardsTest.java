@@ -1,6 +1,4 @@
 package generic;
-
-import com.sun.istack.internal.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,7 +70,7 @@ public class WildcardsTest {
     }
 
 
-    public static void main(@NotNull String[] args) {
+    public static void main(String[] args) {
         List<Integer> il = Arrays.asList(1, 2, 3);
         List<Double> dl = Arrays.asList(0.5, 2.5, 3.0);
         List<AtomicLong> al = Arrays.asList(new AtomicLong(1), new AtomicLong(2));

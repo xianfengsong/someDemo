@@ -16,6 +16,7 @@
         <module>hystrix-study</module>
         <module>spring-boot-study</module>
         <module>design-pattern</module>
+        <module>spi-demo</module>
     </modules>
 
     <properties>
