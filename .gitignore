@@ -1,8 +1,6 @@
 /.idea/
 *.iml
 */target/
-/thrift-demo/
-/thrift-demo-api/
 /jmeter-rpc-tester/
 */lib/
 log
