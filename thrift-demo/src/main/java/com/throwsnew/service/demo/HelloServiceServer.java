@@ -15,7 +15,7 @@ public class HelloServiceServer {
 
     public static void main(String[] args) {
         try {
-            String isBlock = "true";
+            String isBlock = "false";
             if ("false".equals(isBlock)) {
                 //使用非阻塞套接字
                 TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(7911);

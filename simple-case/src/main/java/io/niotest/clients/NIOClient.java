@@ -30,7 +30,8 @@ public class NIOClient implements Runnable {
         channel = SocketChannel.open();
         channel.configureBlocking(false);
 
-        channel.register(selector, SelectionKey.OP_CONNECT);
+        SelectionKey key = channel.register(selector, SelectionKey.OP_CONNECT);
+//        key.interestOps(SelectionKey.OP_READ);
         channel.connect(SERVER_ADDR);
     }
 

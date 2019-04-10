@@ -16,7 +16,7 @@ public class HelloServiceClient {
 
     public static void main(String[] args) {
         try {
-            String isSync = "true";
+            String isSync = "false";
             if ("true".equals(isSync)) {
                 TTransport transport = new TSocket("localhost", 7911);
                 transport.open();
@@ -32,7 +32,8 @@ public class HelloServiceClient {
 
                 System.out.println("client async calls");
                 MethodCallback callback = new MethodCallback();
-                asyncClient.helloString("baba", callback);
+//                asyncClient.helloString("baba", callback);
+                asyncClient.helloVoid(callback);
                 Object result = callback.getResponse();
                 while (result == null) {
                     result = callback.getResponse();
