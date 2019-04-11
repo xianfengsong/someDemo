@@ -31,16 +31,17 @@ public class HelloServiceClient {
                 HelloService.AsyncClient asyncClient = new HelloService.AsyncClient(protocol, clientManager, transport);
 
                 System.out.println("client async calls");
-                MethodCallback callback = new MethodCallback();
-//                asyncClient.helloString("baba", callback);
-                asyncClient.helloVoid(callback);
+                HelloStringCallback callback = new HelloStringCallback();
+//              CommonCallback callback=new CommonCallback();
+                asyncClient.helloString("baba", callback);
                 Object result = callback.getResponse();
+
                 while (result == null) {
                     result = callback.getResponse();
                 }
-                System.out.print(".");
-                String msg = ((HelloService.AsyncClient.helloString_call) result).getResult();
-                System.out.println("msg:" + msg);
+                //使用CommonCallback，需要转型
+//                result = ((HelloService.AsyncClient.helloString_call) result).getResult();
+                System.out.println("msg:" + result);
             }
         } catch (TException | IOException e) {
             e.printStackTrace();
