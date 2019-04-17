@@ -11,6 +11,127 @@ import org.junit.Test;
 public class ValueTypeTest {
 
     @Test
+    public void down() {
+        XParam x = new XParam("x", 1, "1.0");
+        System.out.println(x);
+        Param xp = get(x);
+        System.out.println(xp);
+        XParam y = (XParam) xp;
+        System.out.println(y);
+        System.out.println(y.getVersion());
+    }
+
+    private Param get(XParam x) {
+        return (Param) x;
+    }
+
+    /**
+     * 函数内可以改变参数的字段
+     */
+    @Test
+    public void testParamFieldCanChange() {
+        Param origin = new Param(null, 0);
+
+        funcA(origin);
+        funcB(origin);
+        Assert.assertEquals("fail", origin.getName(), "b");
+        Assert.assertEquals("fail", origin.getValue(), 2);
+        System.out.println(origin);
+    }
+
+    /**
+     * 函数内不能改变参数的指向
+     */
+    @Test
+    public void testParamPointerCantChange() {
+        Param origin = null;
+        funcA(origin);
+        funcB(origin);
+        Assert.assertNull(origin);
+        System.out.println(origin);
+    }
+
+    private void funcA(Param param) {
+        if (param == null) {
+            param = new Param("a", 1);
+        }
+        System.out.println(param);
+        param.setName("a");
+        param.setValue(1);
+    }
+
+    private void funcB(Param param) {
+        if (param == null) {
+            param = new Param("b", 2);
+        }
+        System.out.println(param);
+        param.setName("b");
+        param.setValue(2);
+    }
+
+    class XParam extends Param {
+
+        String version;
+
+        public XParam(String name, int value, String version) {
+            super(name, value);
+            this.version = version;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public String toString() {
+            return "XParam{" +
+                    "version='" + version + '\'' +
+                    ", name='" + name + '\'' +
+                    ", value=" + value +
+                    '}';
+        }
+    }
+
+    class Param {
+
+        String name;
+        int value;
+
+        public Param(String name, int value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "Param{" +
+                    "name='" + name + '\'' +
+                    ", value=" + value +
+                    '}';
+        }
+    }
+
+    @Test
     public void swapIntegerTest() {
         Integer a = 1, b = 2;
         System.out.println("a=" + a + ",b=" + b);

@@ -30,7 +30,7 @@ import org.junit.Test;
 /**
  * author Xianfeng <br/>
  * date 19-3-19 下午7:36 <br/>
- * Desc:
+ * Desc: servlet 3.0 中的责任链模式，通过调用栈来实现Filter的执行顺序
  */
 
 public class ServletFilterChainTest {
