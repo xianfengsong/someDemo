@@ -10,21 +10,6 @@ import org.junit.Test;
  */
 public class ValueTypeTest {
 
-    @Test
-    public void down() {
-        XParam x = new XParam("x", 1, "1.0");
-        System.out.println(x);
-        Param xp = get(x);
-        System.out.println(xp);
-        XParam y = (XParam) xp;
-        System.out.println(y);
-        System.out.println(y.getVersion());
-    }
-
-    private Param get(XParam x) {
-        return (Param) x;
-    }
-
     /**
      * 函数内可以改变参数的字段
      */
@@ -67,33 +52,6 @@ public class ValueTypeTest {
         System.out.println(param);
         param.setName("b");
         param.setValue(2);
-    }
-
-    class XParam extends Param {
-
-        String version;
-
-        public XParam(String name, int value, String version) {
-            super(name, value);
-            this.version = version;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        @Override
-        public String toString() {
-            return "XParam{" +
-                    "version='" + version + '\'' +
-                    ", name='" + name + '\'' +
-                    ", value=" + value +
-                    '}';
-        }
     }
 
     class Param {

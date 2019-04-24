@@ -18,10 +18,16 @@ public class HelloStringCallback implements AsyncMethodCallback<helloString_call
         return response;
     }
 
+    HelloStringCallback() {
+        super();
+        System.out.println("init Thread ID=" + Thread.currentThread().getId());
+    }
+
 
     @Override
     public void onComplete(helloString_call response) {
         try {
+            System.out.println("onComplete Thread ID=" + Thread.currentThread().getId());
             this.response = response.getResult();
         } catch (TException e) {
             e.printStackTrace();

@@ -12,6 +12,7 @@ public class HelloServiceImpl implements HelloService.Iface {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println("para=" + para);
         return "Hello !" + para;
     }
 
