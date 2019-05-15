@@ -29,21 +29,21 @@ public class HelloServiceClient {
                 TNonblockingTransport transport = new TNonblockingSocket("localhost", 7911);
                 TProtocolFactory protocol = new TBinaryProtocol.Factory();
                 HelloService.AsyncClient asyncClient = new HelloService.AsyncClient(protocol, clientManager, transport);
-
-                System.out.println("client async calls");
+                asyncClient.setTimeout(1500L);
                 HelloStringCallback callback = new HelloStringCallback();
 //              CommonCallback callback=new CommonCallback();
                 asyncClient.helloString("baba", callback);
-                Object result = callback.getResponse();
+                System.out.println("client async calls");
+                //等待触发回调
+                Thread.sleep(1000L);
 
-                while (result == null) {
-                    result = callback.getResponse();
-                }
-                //使用CommonCallback，需要转型
-//                result = ((HelloService.AsyncClient.helloString_call) result).getResult();
-                System.out.println("msg:" + result);
+
             }
         } catch (TException | IOException e) {
+            System.out.println("ERROR");
+            e.printStackTrace();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

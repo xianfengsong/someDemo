@@ -8,7 +8,7 @@ public class HelloServiceImpl implements HelloService.Iface {
     @Override
     public String helloString(String para) throws TException {
         try {
-            Thread.sleep(1000L);
+            Thread.sleep(100L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

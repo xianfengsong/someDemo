@@ -14,10 +14,6 @@ public class HelloStringCallback implements AsyncMethodCallback<helloString_call
     //todo 不添加volatile 可能读取不到response的内容 说明执行回调的是另一个线程？
     private String response = null;
 
-    String getResponse() {
-        return response;
-    }
-
     HelloStringCallback() {
         super();
         System.out.println("init Thread ID=" + Thread.currentThread().getId());
@@ -29,6 +25,7 @@ public class HelloStringCallback implements AsyncMethodCallback<helloString_call
         try {
             System.out.println("onComplete Thread ID=" + Thread.currentThread().getId());
             this.response = response.getResult();
+            System.out.println("msg:" + response.getResult());
         } catch (TException e) {
             e.printStackTrace();
         }
@@ -36,6 +33,7 @@ public class HelloStringCallback implements AsyncMethodCallback<helloString_call
 
     @Override
     public void onError(Throwable throwable) {
+        System.out.println("onError:");
         throwable.printStackTrace();
     }
 }
