@@ -1,15 +1,17 @@
 package guava.cache;
 
 import com.google.common.base.Joiner;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheStats;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import com.google.common.cache.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Xianfeng
@@ -22,6 +24,8 @@ public class CacheTest {
 
     private static Cache<String, Bean> beanCache;
     private static Cache<String, String> stringCache;
+    //取不到值会去加载内容
+    private static LoadingCache<String, Bean> loadingCache;
 
     @Before
     public void init() {
@@ -38,6 +42,64 @@ public class CacheTest {
         stringCache = CacheBuilder.newBuilder()
                 .maximumSize(10)
                 .build();
+        loadingCache = CacheBuilder.newBuilder()
+                .maximumSize(100)
+                .build(new CacheLoader<String, Bean>() {
+                    @Override
+                    public Bean load(String s) {
+                        return new Bean("new bean", new HashSet<>());
+                    }
+                });
+    }
+
+    @Test
+    public void testGet() {
+        String value = stringCache.getIfPresent("what");
+        Assert.assertNull(value);
+    }
+
+    /**
+     * 测试达到size上限时 cache如何回收
+     */
+    @Test
+    public void testSize() {
+        for (int i = 0; i < 10; i++) {
+            stringCache.put("k" + i, "val");
+        }
+        System.out.println("get k0:" + stringCache.getIfPresent("k0"));
+        stringCache.put("k10", "val");
+        stringCache.put("k11", "val");
+        //因为k0使用过，所有没有被回收
+        //k1,k2被回收
+        Assert.assertNotNull(stringCache.getIfPresent("k0"));
+        System.out.println("get k0:" + stringCache.getIfPresent("k0"));
+        System.out.println("get k1:" + stringCache.getIfPresent("k1"));
+        System.out.println("get k2:" + stringCache.getIfPresent("k2"));
+
+    }
+
+    @Test
+    public void testLoadingCache() {
+        try {
+            //默认需要处理load时可能的异常
+            Bean loaded = loadingCache.get("whatever");
+            Assert.assertNotNull(loaded);
+            loadingCache.getIfPresent(null);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        //不抛出check exception的调用方式
+        Bean loaded = loadingCache.getUnchecked("whatever");
+        Assert.assertNotNull(loaded);
+
+        //load一组 键值对
+        Iterable<String> keys = () -> Arrays.asList("1", "2", "3").iterator();
+        try {
+            Map<String, Bean> beans = loadingCache.getAll(keys);
+            Assert.assertEquals(3, beans.size());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -118,28 +180,6 @@ public class CacheTest {
         copy.setId("origin");
         //缓存数据不变
         Assert.assertEquals(beanCache.getIfPresent("bean").getId(), newID);
-    }
-
-    /**
-     * guava cache保存的对象，会随着原始对象改变
-     */
-    @Test
-    public void cacheChangeWithObject() {
-        Set<String> set = new HashSet<>();
-        set.add("a");
-        set.add("b");
-        Bean bean = new Bean("origin", set);
-        beanCache.put("bean", bean);
-
-        System.out.println("origin bean:" + bean + "\ncache bean:" + beanCache.getIfPresent("bean"));
-
-        bean.set.add("c");
-        bean.id = "origin_v1";
-        String originChanged = bean.toString();
-        String cache = beanCache.getIfPresent("bean").toString();
-        Assert.assertEquals("cache没有随对象改变", originChanged, cache);
-
-        System.out.println("changed bean:" + originChanged + "\ncache bean:" + beanCache.getIfPresent("bean"));
     }
 
     class Bean implements Cloneable {

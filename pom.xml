@@ -17,6 +17,7 @@
         <module>spring-boot-study</module>
         <module>design-pattern</module>
         <module>spi-demo</module>
+        <module>thrift-demo</module>
     </modules>
 
     <properties>
