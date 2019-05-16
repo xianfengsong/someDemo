@@ -3,6 +3,7 @@ package guava.cache;
 import com.google.common.base.Joiner;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheStats;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,7 @@ public class CacheTest {
 
 
     private static Cache<String, Bean> beanCache;
+    private static Cache<String, String> stringCache;
 
     @Before
     public void init() {
@@ -29,8 +31,39 @@ public class CacheTest {
                 //不能和maximumSize结合使用,单位是什么？
 //                .maximumWeight()
                 .concurrencyLevel(4)
-                .expireAfterWrite(5, TimeUnit.SECONDS)
+                .expireAfterWrite(50, TimeUnit.SECONDS)
+                //打开监控选项
+                .recordStats()
                 .build();
+        stringCache = CacheBuilder.newBuilder()
+                .maximumSize(10)
+                .build();
+    }
+
+    /**
+     * 测试guava cache 输出的监控信息
+     */
+    @Test
+    public void testMonitor() throws InterruptedException {
+        String key = "monitor";
+        for (int i = 0; i < 10; i++) {
+            Bean bean = new Bean(i + "xx", new HashSet<>());
+            beanCache.put(key + i, bean);
+        }
+        for (int i = 0; i < 100; i++) {
+            //guava cache 统计是实时的,不需要sleep()
+//            Thread.sleep(100L);
+            Bean bean = beanCache.getIfPresent(key + (i % 15));
+            CacheStats stats = beanCache.stats();
+            if (i % 10 == 0) {
+                System.out.println("SUMMARY:" + stats);
+                System.out.println(
+                        String.format("命中率：%.2f%% value平均加载时间：%.2f miss率：%.2f%% 总请求次数：%d",
+                                stats.hitRate() * 100, stats.averageLoadPenalty(),
+                                stats.missRate() * 100, stats.requestCount()));
+            }
+        }
+
     }
 
     @Test
@@ -47,19 +80,35 @@ public class CacheTest {
     }
 
     /**
-     * 如果guava cache中取出的对象要修改，一定要先做深拷贝
-     * 否则修改时，缓存也被修改
+     * 测试string类型value从cache取出后，修改不会影响到cache
      */
     @Test
-    public void objectDeepCopy() throws CloneNotSupportedException {
+    public void testChangeStringCache() {
+        String value = "Hi";
+        String key = "Key";
+        stringCache.put(key, value);
+        String cache = stringCache.getIfPresent(key);
+        //修改cache
+        cache = "Hello";
+        Assert.assertEquals("string应该不会被修改，因为immutable", value, stringCache.getIfPresent(key));
+        stringCache.getIfPresent(key);
+    }
+
+    /**
+     * 测试从guava cache取出的对象被修改后，cache中的数据也被修改
+     * 如果guava cache中取出的对象要修改，一定要先做深拷贝
+     */
+    @Test
+    public void testChangeObjectCache() throws CloneNotSupportedException {
         Set<String> set = new HashSet<>();
         set.add("a");
         set.add("b");
-        String newID = "newID";
+
         Bean bean = new Bean("origin", set);
         beanCache.put("bean", bean);
         //修改cache对象
         Bean cache = beanCache.getIfPresent("bean");
+        String newID = "newID";
         cache.setId(newID);
         //影响了缓存中的数据
         Assert.assertEquals(beanCache.getIfPresent("bean").getId(), newID);
@@ -69,8 +118,6 @@ public class CacheTest {
         copy.setId("origin");
         //缓存数据不变
         Assert.assertEquals(beanCache.getIfPresent("bean").getId(), newID);
-
-
     }
 
     /**

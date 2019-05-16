@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.thrift.protocol.TProtocol</OriginalElement>
+  <nodes>
+    <node x="863.0" y="570.5">org.apache.thrift.protocol.TList</node>
+    <node x="20.0" y="510.0">org.apache.thrift.protocol.TMessage</node>
+    <node x="586.25" y="801.0">org.apache.thrift.protocol.TProtocol</node>
+    <node x="481.0357142857143" y="0.0">org.apache.thrift.protocol.TType</node>
+    <node x="574.0" y="525.0">org.apache.thrift.protocol.TField</node>
+    <node x="343.0" y="555.5">org.apache.thrift.protocol.TMap</node>
+    <node x="1092.0" y="585.5">org.apache.thrift.protocol.TStruct</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.thrift.protocol.TField" target="org.apache.thrift.protocol.TField">
+      <point x="-62.25" y="95.5" />
+      <point x="636.25" y="736.0" />
+      <point x="554.0" y="736.0" />
+      <point x="554.0" y="620.5" />
+      <point x="-124.5" y="-0.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TMap" target="org.apache.thrift.protocol.TType">
+      <point x="0.0" y="-65.0" />
+      <point x="438.5" y="490.0" />
+      <point x="549.2857142857142" y="490.0" />
+      <point x="-22.75" y="230.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TList" target="org.apache.thrift.protocol.TList">
+      <point x="-47.25" y="50.0" />
+      <point x="910.25" y="690.5" />
+      <point x="843.0" y="690.5" />
+      <point x="843.0" y="620.5" />
+      <point x="-94.5" y="-0.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TProtocol" target="org.apache.thrift.protocol.TStruct">
+      <point x="139.60000000000002" y="-771.0" />
+      <point x="900.35" y="781.0" />
+      <point x="1221.75" y="781.0" />
+      <point x="43.25" y="35.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TProtocol" target="org.apache.thrift.protocol.TMap">
+      <point x="-69.80000000000007" y="-771.0" />
+      <point x="690.9499999999999" y="771.0" />
+      <point x="486.25" y="771.0" />
+      <point x="47.75" y="65.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TMessage" target="org.apache.thrift.protocol.TMessage">
+      <point x="-70.75" y="110.5" />
+      <point x="90.75" y="751.0" />
+      <point x="0.0" y="751.0" />
+      <point x="0.0" y="620.5" />
+      <point x="-141.5" y="-0.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TProtocol" target="org.apache.thrift.protocol.TProtocol">
+      <point x="0.0" y="771.0" />
+      <point x="760.75" y="2363.0" />
+      <point x="566.25" y="2363.0" />
+      <point x="566.25" y="1572.0" />
+      <point x="-174.5" y="-0.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TMap" target="org.apache.thrift.protocol.TMap">
+      <point x="-47.75" y="65.0" />
+      <point x="390.75" y="705.5" />
+      <point x="323.0" y="705.5" />
+      <point x="323.0" y="620.5" />
+      <point x="-95.5" y="-0.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TField" target="org.apache.thrift.protocol.TType">
+      <point x="0.0" y="-95.5" />
+      <point x="698.5" y="490.0" />
+      <point x="594.7857142857142" y="490.0" />
+      <point x="22.75" y="230.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TProtocol" target="org.apache.thrift.protocol.TList">
+      <point x="69.79999999999995" y="-771.0" />
+      <point x="830.55" y="771.0" />
+      <point x="1004.75" y="771.0" />
+      <point x="47.25" y="50.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TProtocol" target="org.apache.thrift.protocol.TMessage">
+      <point x="-139.60000000000002" y="-771.0" />
+      <point x="621.15" y="781.0" />
+      <point x="232.25" y="781.0" />
+      <point x="70.75" y="110.5" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TMessage" target="org.apache.thrift.protocol.TType">
+      <point x="0.0" y="-110.5" />
+      <point x="161.5" y="480.0" />
+      <point x="503.7857142857143" y="480.0" />
+      <point x="-68.25" y="230.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TProtocol" target="org.apache.thrift.protocol.TField">
+      <point x="0.0" y="-771.0" />
+      <point x="62.25" y="95.5" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TStruct" target="org.apache.thrift.protocol.TStruct">
+      <point x="-43.25" y="35.0" />
+      <point x="1135.25" y="675.5" />
+      <point x="1072.0" y="675.5" />
+      <point x="1072.0" y="620.5" />
+      <point x="-86.5" y="-0.0" />
+    </edge>
+    <edge source="org.apache.thrift.protocol.TList" target="org.apache.thrift.protocol.TType">
+      <point x="0.0" y="-50.0" />
+      <point x="957.5" y="480.0" />
+      <point x="640.2857142857142" y="480.0" />
+      <point x="68.25" y="230.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="765.5" y="406.0" />
+  <SelectedNodes>
+    <node>org.apache.thrift.protocol.TProtocol</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Properties</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
