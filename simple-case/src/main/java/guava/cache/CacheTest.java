@@ -1,17 +1,21 @@
 package guava.cache;
 
 import com.google.common.base.Joiner;
-import com.google.common.cache.*;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.CacheStats;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.Weigher;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Xianfeng
@@ -22,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class CacheTest {
 
 
-    private static Cache<String, Bean> beanCache;
+    private static Cache<String, Bean> beanCache, weightBeanCache;
     private static Cache<String, String> stringCache;
     //取不到值会去加载内容
     private static LoadingCache<String, Bean> loadingCache;
@@ -32,10 +36,8 @@ public class CacheTest {
         beanCache = CacheBuilder.newBuilder()
                 //最多有多少键值对
                 .maximumSize(20)
-                //不能和maximumSize结合使用,单位是什么？
-//                .maximumWeight()
                 .concurrencyLevel(4)
-                .expireAfterWrite(50, TimeUnit.SECONDS)
+                .expireAfterWrite(5, TimeUnit.SECONDS)
                 //打开监控选项
                 .recordStats()
                 .build();
@@ -47,15 +49,63 @@ public class CacheTest {
                 .build(new CacheLoader<String, Bean>() {
                     @Override
                     public Bean load(String s) {
+                        System.out.println("create bean! " + s);
                         return new Bean("new bean", new HashSet<>());
                     }
                 });
+
+        //自定义weight计算方式=set大小×10
+        weightBeanCache = CacheBuilder.newBuilder()
+                //不能和maximumSize结合使用
+                .maximumWeight(100)
+                .weigher((Weigher<String, Bean>) (key, value) -> value.getSet().size() * 10)
+                .recordStats()
+                .build();
     }
 
     @Test
     public void testGet() {
         String value = stringCache.getIfPresent("what");
         Assert.assertNull(value);
+    }
+
+
+    /**
+     * 测试weak key/value cache & soft value cache
+     * 1.主动gc后 weak value cache被回收
+     * 2.使用了weak-key/value 和soft value的cache，在比较键时只能使用==，不支持equals
+     */
+    @Test
+    public void testWeakSoft() {
+        Bean weakKey = new Bean("i'm weak", null);
+        Cache<Bean, Bean> weakKeyCache = CacheBuilder.newBuilder()
+                .weakKeys()
+                .build();
+        Cache<String, Bean> weakValueCache = CacheBuilder.newBuilder()
+                .weakValues()
+                .build();
+        Cache<String, Bean> softValueCache = CacheBuilder.newBuilder()
+                .softValues()
+                .build();
+        weakKeyCache.put(weakKey, new Bean("wkk", new HashSet<>()));
+        weakValueCache.put("weak-value", new Bean("wkv", new HashSet<>()));
+        softValueCache.put("soft-value", new Bean("stv", new HashSet<>()));
+        System.out.println(String.format("weak-key:%s \nweak-value:%s \nsoft-value:%s",
+                weakKeyCache.getIfPresent(weakKey),
+                weakValueCache.getIfPresent("weak-value"),
+                softValueCache.getIfPresent("soft-value")));
+
+        System.gc();
+        Assert.assertNull("weak-value cache gc后消失", weakKeyCache.getIfPresent("weak-value"));
+
+        System.out.println(String.format("After GC\nweak-key:%s \nweak-value:%s \nsoft-value:%s",
+                weakKeyCache.getIfPresent(weakKey),
+                weakValueCache.getIfPresent("weak-value"),
+                softValueCache.getIfPresent("soft-value")));
+
+        Bean weakKey2 = new Bean("i'm weak", null);
+        Assert.assertNull("使用弱引用键的缓存用==而不是equals比较键", weakKeyCache.getIfPresent(weakKey2));
+
     }
 
     /**
@@ -78,6 +128,51 @@ public class CacheTest {
 
     }
 
+    /**
+     * 测试超过weight上限触发回收
+     * 和size上限不同，设置weight上限，可以自定义每个k/v的weight，适合cache中元素大小差别大的情况
+     * weight只保证cache不会超过这个上限，cache的回收不能直接根据weight来预测
+     * 可能没到weight上限，cache就会被回收：Note that the cache may evict an entry before this limit is exceeded.
+     */
+    @Test
+    public void testWeight() {
+        Bean bean10 = new Bean("size10", getSets(1));
+        Bean bean20 = new Bean("size20", getSets(2));
+        Bean bean40 = new Bean("size40", getSets(4));
+        Bean bean80 = new Bean("size40", getSets(8));
+        Iterable<String> iterable = () -> Arrays.asList("10", "20", "40", "80").iterator();
+
+        weightBeanCache.put("10", bean10);
+        System.out.println("put 10:" + weightBeanCache.getAllPresent(iterable));
+
+        weightBeanCache.put("20", bean20);
+        System.out.println("put 20:" + weightBeanCache.getAllPresent(iterable));
+
+        weightBeanCache.put("40", bean40);
+        System.out.println("put 40:" + weightBeanCache.getAllPresent(iterable));
+        Assert.assertNull("40根本没存入缓存", weightBeanCache.getIfPresent("40"));
+
+        weightBeanCache.put("80", bean80);
+        System.out.println("put 80:" + weightBeanCache.getAllPresent(iterable));
+        Assert.assertNull("80根本没存入缓存", weightBeanCache.getIfPresent("80"));
+
+        Map<String, Bean> all = weightBeanCache.getAllPresent(iterable);
+        System.out.println("最后只有20留下，莫名其妙：" + all);
+        System.out.println("被回收的数量：" + weightBeanCache.stats().evictionCount());
+
+    }
+
+    private Set<String> getSets(int size) {
+        Set<String> set = new HashSet<>();
+        for (int i = 0; i < size; i++) {
+            set.add(String.valueOf((char) ('a' + i)));
+        }
+        return set;
+    }
+
+    /**
+     * 测试loading cache ， 自动创建cache
+     */
     @Test
     public void testLoadingCache() {
         try {
@@ -106,7 +201,7 @@ public class CacheTest {
      * 测试guava cache 输出的监控信息
      */
     @Test
-    public void testMonitor() throws InterruptedException {
+    public void testMonitor() {
         String key = "monitor";
         for (int i = 0; i < 10; i++) {
             Bean bean = new Bean(i + "xx", new HashSet<>());
@@ -115,12 +210,13 @@ public class CacheTest {
         for (int i = 0; i < 100; i++) {
             //guava cache 统计是实时的,不需要sleep()
 //            Thread.sleep(100L);
-            Bean bean = beanCache.getIfPresent(key + (i % 15));
+            beanCache.getIfPresent(key + (i % 15));
             CacheStats stats = beanCache.stats();
             if (i % 10 == 0) {
                 System.out.println("SUMMARY:" + stats);
                 System.out.println(
-                        String.format("命中率：%.2f%% value平均加载时间：%.2f miss率：%.2f%% 总请求次数：%d",
+                        String.format("size:%d 命中率：%.2f%% value平均加载时间：%.2f miss率：%.2f%% 总请求次数：%d",
+                                beanCache.size(),
                                 stats.hitRate() * 100, stats.averageLoadPenalty(),
                                 stats.missRate() * 100, stats.requestCount()));
             }
@@ -128,6 +224,9 @@ public class CacheTest {
 
     }
 
+    /**
+     * 测试超时时间
+     */
     @Test
     public void testTimeout() {
         Bean bean = new Bean("xx", null);
@@ -138,7 +237,7 @@ public class CacheTest {
             e.printStackTrace();
         }
         Bean cache = beanCache.getIfPresent("bean");
-        System.out.println(cache);
+        Assert.assertNull("cache timeout", cache);
     }
 
     /**
