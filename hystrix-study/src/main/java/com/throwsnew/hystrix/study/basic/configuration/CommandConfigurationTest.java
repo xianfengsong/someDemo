@@ -1,11 +1,11 @@
-package com.throwsnew.hystrix.study.basic;
+package com.throwsnew.hystrix.study.basic.configuration;
 
 import com.netflix.hystrix.Hystrix;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
-import com.throwsnew.hystrix.study.basic.configuration.CommandWithConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
 /**
  * author Xianfeng <br/>
@@ -18,7 +18,7 @@ public class CommandConfigurationTest {
 
     private int timeout = 100;
     private int statisticalWindowTime = 2_000;
-    private int errorPercentage = 5;
+    private int errorPercentage = 50;
     private int requestVolume = 10;
     private int sleepWindowMs = 5_000;
     private int poolSize = 20;
@@ -38,57 +38,58 @@ public class CommandConfigurationTest {
     }
 
     /**
-     * 命令执行超时触发熔断（同样受窗口时间 请求阈值的限制）
+     * 测试命令执行超时触发熔断（同样受窗口时间 请求阈值的限制）
      */
-//    @Test
-    public void testTimeout() throws InterruptedException {
+    @Test
+    public void testCircuitOpen() throws InterruptedException {
         int runTime = timeout + 10;
         CommandWithConfiguration command = new CommandWithConfiguration(setter, runTime, true);
-        String result = command.execute();
-        //命令运行超时 fallback
-        Assert.assertEquals("fallback", result);
-        //执行次数满足阈值
+        command.execute();
+        Assert.assertTrue("命令应该超时", command.isResponseTimedOut());
+        //总执行次数满足阈值
         for (int i = 0; i < requestVolume; i++) {
-            CommandWithConfiguration command2 = new CommandWithConfiguration(setter, runTime, true);
-            command2.execute();
+            command = new CommandWithConfiguration(setter, runTime, true);
+            command.execute();
         }
         //等待窗口时间
         Thread.sleep(statisticalWindowTime);
         Assert.assertTrue("熔断打开", command.isCircuitBreakerOpen());
-        System.out.println(String.format("timeout %d runTime %d open? %s", timeout, runTime,
-                command.isCircuitBreakerOpen()));
-
     }
 
     /**
-     * 在窗口时间内 执行的请求数超过阈值 且 失败占比超过限制 会触发熔断
+     * 测试失败次数占比小于阈值，不会触发熔断
      */
-//    @Test
-    public void testRequestVolume() {
-        // 请求次数超过阈值
-        int requestNumber = requestVolume * 2;
+    @Test
+    public void testCircuitNotOpenByRate() {
+        // 让请求次数超过阈值
+        int requestNumber = requestVolume + 1;
         // 调整run time让所有测试的command 在同一窗口内执行完成
-        int runTime = statisticalWindowTime / requestNumber - 10;
-
-        for (int execTimes = 1; execTimes < requestNumber; execTimes++) {
-            // 让命令全部失败
-            HystrixCommand<String> cmd = new CommandWithConfiguration(setter, runTime, false);
-            cmd.execute();
-            if (execTimes <= requestVolume) {
-                Assert.assertFalse("熔断关闭", cmd.isCircuitBreakerOpen());
+        int runTime = Math.max(statisticalWindowTime / requestNumber - 10, 0);
+        // 根据失败率计算触发熔断的最小失败次数
+        int minErrorTimes = (int) Math.ceil((double) requestNumber * errorPercentage / 100);
+        HystrixCommand<String> cmd = null;
+        for (int execTimes = 0; execTimes < requestNumber; execTimes++) {
+            // 让命令失败次数小于 minErrorTimes-1
+            if (execTimes < Math.max(minErrorTimes - 1, 0)) {
+                cmd = new CommandWithConfiguration(setter, runTime, false);
             } else {
-                Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
+                //让命令成功
+                cmd = new CommandWithConfiguration(setter, runTime, true);
             }
+            cmd.execute();
+
         }
+        Assert.assertFalse("熔断不会触发", cmd.isCircuitBreakerOpen());
+
     }
 
     /**
      * 熔断器打开后 在经过 sleepWindowInMilliseconds，变成半开状态，重新判断是否还要打开
      */
-//    @Test
+    @Test
     public void testSleepWindow() throws InterruptedException {
         //触发熔断开关
-        HystrixCommand<String> cmd = new CommandWithConfiguration(setter, 0, false);
+        HystrixCommand<String> cmd = null;
         for (int execTimes = 1; execTimes < requestVolume + 5; execTimes++) {
             cmd = new CommandWithConfiguration(setter, 0, false);
             cmd.execute();
@@ -96,10 +97,11 @@ public class CommandConfigurationTest {
         Thread.sleep(statisticalWindowTime);
         Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
 
-        //等待开关回复到半开状态
+        //等待开关恢复到半开状态
         Thread.sleep(sleepWindowMs + 10);
-        HystrixCommand<String> newCmd = new CommandWithConfiguration(setter, 0, true);
-        newCmd.execute();
+        cmd = new CommandWithConfiguration(setter, 0, true);
+        Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
+        cmd.execute();
         Assert.assertFalse("熔断关闭", cmd.isCircuitBreakerOpen());
     }
 }

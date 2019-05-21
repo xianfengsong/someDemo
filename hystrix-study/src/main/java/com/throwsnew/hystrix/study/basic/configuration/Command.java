@@ -1,7 +1,11 @@
 package com.throwsnew.hystrix.study.basic.configuration;
 
-import com.netflix.hystrix.*;
-
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.HystrixThreadPoolKey;
+import com.netflix.hystrix.HystrixThreadPoolProperties;
 import java.util.Random;
 
 /**
