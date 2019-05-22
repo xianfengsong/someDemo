@@ -22,12 +22,12 @@ public class CommandConfigurationTest {
     private int requestVolume = 10;
     private int sleepWindowMs = 5_000;
     private int poolSize = 20;
-    private CommandWithConfiguration.Setter setter;
+    private CommandConfigByCode.Setter setter;
 
     @Before
     public void init() {
         Hystrix.reset();
-        setter = CommandWithConfiguration.setter(
+        setter = CommandConfigByCode.setter(
                 ExecutionIsolationStrategy.THREAD,
                 requestVolume,
                 statisticalWindowTime,
@@ -43,12 +43,12 @@ public class CommandConfigurationTest {
     @Test
     public void testCircuitOpen() throws InterruptedException {
         int runTime = timeout + 10;
-        CommandWithConfiguration command = new CommandWithConfiguration(setter, runTime, true);
+        CommandConfigByCode command = new CommandConfigByCode(setter, runTime, true);
         command.execute();
         Assert.assertTrue("命令应该超时", command.isResponseTimedOut());
         //总执行次数满足阈值
         for (int i = 0; i < requestVolume; i++) {
-            command = new CommandWithConfiguration(setter, runTime, true);
+            command = new CommandConfigByCode(setter, runTime, true);
             command.execute();
         }
         //等待窗口时间
@@ -71,10 +71,10 @@ public class CommandConfigurationTest {
         for (int execTimes = 0; execTimes < requestNumber; execTimes++) {
             // 让命令失败次数小于 minErrorTimes-1
             if (execTimes < Math.max(minErrorTimes - 1, 0)) {
-                cmd = new CommandWithConfiguration(setter, runTime, false);
+                cmd = new CommandConfigByCode(setter, runTime, false);
             } else {
                 //让命令成功
-                cmd = new CommandWithConfiguration(setter, runTime, true);
+                cmd = new CommandConfigByCode(setter, runTime, true);
             }
             cmd.execute();
 
@@ -91,7 +91,7 @@ public class CommandConfigurationTest {
         //触发熔断开关
         HystrixCommand<String> cmd = null;
         for (int execTimes = 1; execTimes < requestVolume + 5; execTimes++) {
-            cmd = new CommandWithConfiguration(setter, 0, false);
+            cmd = new CommandConfigByCode(setter, 0, false);
             cmd.execute();
         }
         Thread.sleep(statisticalWindowTime);
@@ -99,7 +99,7 @@ public class CommandConfigurationTest {
 
         //等待开关恢复到半开状态
         Thread.sleep(sleepWindowMs + 10);
-        cmd = new CommandWithConfiguration(setter, 0, true);
+        cmd = new CommandConfigByCode(setter, 0, true);
         Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
         cmd.execute();
         Assert.assertFalse("熔断关闭", cmd.isCircuitBreakerOpen());

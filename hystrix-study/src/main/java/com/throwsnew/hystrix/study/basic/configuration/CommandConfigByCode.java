@@ -12,14 +12,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * author Xianfeng <br/>
  * date 18-10-19 下午7:06 <br/>
- * Desc: 用自定义配置定义command
+ * Desc: 用继承并通过代码自定义配置的hystrix
  */
-public class CommandWithConfiguration extends HystrixCommand<String> {
+public class CommandConfigByCode extends HystrixCommand<String> {
 
     private AtomicInteger runTimeInMilliseconds = new AtomicInteger(100);
     private Boolean shouldSuccess;
 
-    public CommandWithConfiguration(Setter setter, Integer runTime, Boolean shouldSuccess) {
+    public CommandConfigByCode(Setter setter, Integer runTime, Boolean shouldSuccess) {
         super(setter);
         this.runTimeInMilliseconds.getAndSet(runTime);
         this.shouldSuccess = shouldSuccess;
