@@ -54,6 +54,7 @@ public class CommandConfigurationTest {
         //等待窗口时间
         Thread.sleep(statisticalWindowTime);
         Assert.assertTrue("熔断打开", command.isCircuitBreakerOpen());
+
     }
 
     /**
@@ -96,6 +97,10 @@ public class CommandConfigurationTest {
         }
         Thread.sleep(statisticalWindowTime);
         Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
+
+        cmd = new CommandConfigByCode(setter, 0, true);
+        Assert.assertEquals("熔断之后直接返回fallback", "fallback", cmd.execute());
+
 
         //等待开关恢复到半开状态
         Thread.sleep(sleepWindowMs + 10);

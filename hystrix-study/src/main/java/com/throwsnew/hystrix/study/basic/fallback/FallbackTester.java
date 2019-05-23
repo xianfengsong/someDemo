@@ -2,6 +2,7 @@ package com.throwsnew.hystrix.study.basic.fallback;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ import org.junit.Test;
  * date 19-5-21 下午3:37 <br/>
  * Desc:
  */
-public class HelloWorldTester {
+public class FallbackTester {
 
     /**
      * 测试execute正常执行
@@ -42,6 +43,21 @@ public class HelloWorldTester {
         try {
             cmd.execute();
         } catch (HystrixBadRequestException ex) {
+            //获得原始异常
+            ex.getCause().printStackTrace();
+            throw ex;
+        }
+    }
+
+    /**
+     * 测试触发了 HystrixRuntimeException,不会fallback
+     */
+    @Test(expected = com.netflix.hystrix.exception.HystrixRuntimeException.class)
+    public void testHystrixRuntimeException() {
+        HystrixCommand cmd = new CommandHelloWorld(true, false, false, true);
+        try {
+            cmd.execute();
+        } catch (HystrixRuntimeException ex) {
             //获得原始异常
             ex.getCause().printStackTrace();
             throw ex;

@@ -30,6 +30,11 @@ public class CommandHelloWorld extends HystrixCommand<String> {
     private final boolean badRequest;
 
     /**
+     * 是否触发HystrixRuntimeException，这个异常同样不会触发fallback
+     */
+    private final boolean useHystrixRuntimeException;
+
+    /**
      * fallback是否通过网络请求完成
      */
     private final boolean fallbackViaNetwork;
@@ -40,10 +45,15 @@ public class CommandHelloWorld extends HystrixCommand<String> {
     }
 
     CommandHelloWorld(boolean useFallback, boolean badRequest) {
-        this(useFallback, badRequest, false);
+        this(useFallback, badRequest, false, false);
     }
 
     CommandHelloWorld(boolean useFallback, boolean badRequest, boolean fallbackViaNetwork) {
+        this(useFallback, badRequest, fallbackViaNetwork, false);
+    }
+
+    CommandHelloWorld(boolean useFallback, boolean badRequest, boolean fallbackViaNetwork,
+            boolean useHystrixRuntimeException) {
         super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("HelloWorldGroup"))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("commandHelloWorld"))
                 .andCommandPropertiesDefaults(HystrixPropertiesCommandDefault.Setter())
@@ -52,6 +62,7 @@ public class CommandHelloWorld extends HystrixCommand<String> {
         this.useFallback = useFallback;
         this.badRequest = badRequest;
         this.fallbackViaNetwork = fallbackViaNetwork;
+        this.useHystrixRuntimeException = useHystrixRuntimeException;
     }
 
     @Override
@@ -60,6 +71,13 @@ public class CommandHelloWorld extends HystrixCommand<String> {
             if (badRequest) {
                 IllegalArgumentException argumentException = new IllegalArgumentException("参数异常");
                 throw new HystrixBadRequestException("badRequset", argumentException);
+            } else if (useHystrixRuntimeException) {
+                /**
+                 * HystrixRuntimeException 代表可恢复的异常
+                 * 可以由VirtualMachineError的任意实现类(比如StackOverflowError，OutOfMemoryError)
+                 * |ThreadDeath|LinkageError触发
+                 */
+                throw new StackOverflowError("StackOverflowError");
             } else {
                 throw new RuntimeException("exec fail");
             }
