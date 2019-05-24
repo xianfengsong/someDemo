@@ -1,8 +1,10 @@
-package com.throwsnew.hystrix.study.basic.configuration;
+package com.throwsnew.hystrix.study.basic.circuitbreaker;
 
 import com.netflix.hystrix.Hystrix;
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommand.Setter;
 import com.netflix.hystrix.HystrixCommandProperties.ExecutionIsolationStrategy;
+import com.throwsnew.hystrix.study.basic.configuration.CommandConfigByCode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +16,7 @@ import org.junit.Test;
  * 官方更丰富的测试：
  * https://github.com/Netflix/Hystrix/blob/7f5a0afc23aa5ff82320560a04d4c81a45efd67c/hystrix-core/src/test/java/com/netflix/hystrix/HystrixCircuitBreakerTest.java
  */
-public class CommandConfigurationTest {
+public class CommandCircuitBreakerTest {
 
     private int timeout = 100;
     private int statisticalWindowTime = 2_000;
@@ -22,7 +24,7 @@ public class CommandConfigurationTest {
     private int requestVolume = 10;
     private int sleepWindowMs = 5_000;
     private int poolSize = 20;
-    private CommandConfigByCode.Setter setter;
+    private Setter setter;
 
     @Before
     public void init() {
@@ -86,6 +88,7 @@ public class CommandConfigurationTest {
 
     /**
      * 熔断器打开后 在经过 sleepWindowInMilliseconds，变成半开状态，重新判断是否还要打开
+     * 成功执行一次请求后，熔断器关闭
      */
     @Test
     public void testSleepWindow() throws InterruptedException {
@@ -96,16 +99,22 @@ public class CommandConfigurationTest {
             cmd.execute();
         }
         Thread.sleep(statisticalWindowTime);
-        Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
 
+        Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
+        long openTime = System.currentTimeMillis();
         cmd = new CommandConfigByCode(setter, 0, true);
         Assert.assertEquals("熔断之后直接返回fallback", "fallback", cmd.execute());
 
 
         //等待开关恢复到半开状态
-        Thread.sleep(sleepWindowMs + 10);
+        while (System.currentTimeMillis() - openTime < sleepWindowMs) {
+            cmd = new CommandConfigByCode(setter, 0, true);
+            Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
+            Thread.sleep(100);
+        }
+
+        //注意：半开状态执行一次成功，熔断器就关闭了！！！
         cmd = new CommandConfigByCode(setter, 0, true);
-        Assert.assertTrue("熔断打开", cmd.isCircuitBreakerOpen());
         cmd.execute();
         Assert.assertFalse("熔断关闭", cmd.isCircuitBreakerOpen());
     }

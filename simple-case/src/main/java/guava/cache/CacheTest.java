@@ -203,7 +203,7 @@ public class CacheTest {
     @Test
     public void testMonitor() {
         String key = "monitor";
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 40; i++) {
             Bean bean = new Bean(i + "xx", new HashSet<>());
             beanCache.put(key + i, bean);
         }
@@ -215,10 +215,16 @@ public class CacheTest {
             if (i % 10 == 0) {
                 System.out.println("SUMMARY:" + stats);
                 System.out.println(
-                        String.format("size:%d 命中率：%.2f%% value平均加载时间：%.2f miss率：%.2f%% 总请求次数：%d",
+                        String.format("size:%d 命中率：%.2f%% value平均加载时间：%.2f miss率：%.2f%% "
+                                        + "总请求次数：%d totalLoadTime: %d ns ,被驱逐节点数 %d ",
                                 beanCache.size(),
                                 stats.hitRate() * 100, stats.averageLoadPenalty(),
-                                stats.missRate() * 100, stats.requestCount()));
+                                stats.missRate() * 100, stats.requestCount(),
+                                stats.totalLoadTime(),
+                                stats.evictionCount())
+                );
+
+
             }
         }
 
