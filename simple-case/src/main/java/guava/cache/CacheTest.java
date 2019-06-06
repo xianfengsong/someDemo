@@ -231,7 +231,9 @@ public class CacheTest {
     }
 
     /**
-     * 测试超时时间
+     * 测试超时时间,guava中的超时是通过处理查询请求被动完成的
+     * 预期结果：超时后，在收到请求前cache size==1,并没有清理cache
+     * 请求后size==0,cache才被清理
      */
     @Test
     public void testTimeout() {
@@ -242,7 +244,13 @@ public class CacheTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println(beanCache.size());
+        Assert.assertEquals("查询前size还是1", 1, beanCache.size());
+
         Bean cache = beanCache.getIfPresent("bean");
+        System.out.println(beanCache.size());
+
+        Assert.assertEquals("size还是1", 1, beanCache.size());
         Assert.assertNull("cache timeout", cache);
     }
 

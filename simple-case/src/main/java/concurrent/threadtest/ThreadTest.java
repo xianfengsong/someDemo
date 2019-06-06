@@ -1,4 +1,4 @@
-package concurrent.tools;
+package concurrent.threadtest;
 
 import concurrent.Test;
 import java.util.concurrent.BrokenBarrierException;

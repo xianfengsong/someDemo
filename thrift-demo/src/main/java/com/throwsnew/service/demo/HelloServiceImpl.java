@@ -12,12 +12,13 @@ public class HelloServiceImpl implements HelloService.Iface {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("para=" + para);
+        System.out.println("helloString para=" + para);
         return "Hello !" + para;
     }
 
     @Override
     public int helloInt(int para) throws TException {
+        System.out.println("helloInt=" + para);
         return 0;
     }
 
@@ -28,7 +29,7 @@ public class HelloServiceImpl implements HelloService.Iface {
 
     @Override
     public void helloVoid() throws TException {
-        System.out.println("Hello World!");
+        System.out.println("helloVoid!");
     }
 
     @Override

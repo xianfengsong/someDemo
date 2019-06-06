@@ -22,20 +22,20 @@ public class HelloServiceClient {
                 transport.open();
                 TProtocol protocol = new TBinaryProtocol(transport);
                 HelloService.Client client = new HelloService.Client(protocol);
-                client.helloVoid();
+                System.out.println(client.helloString("ping"));
                 transport.close();
             } else {
                 TAsyncClientManager clientManager = new TAsyncClientManager();
                 TNonblockingTransport transport = new TNonblockingSocket("localhost", 7911);
-                TProtocolFactory protocol = new TBinaryProtocol.Factory();
+                TProtocolFactory protocol = new TBinaryProtocol.Factory(false, false);
+
                 HelloService.AsyncClient asyncClient = new HelloService.AsyncClient(protocol, clientManager, transport);
-                asyncClient.setTimeout(1500L);
+                asyncClient.setTimeout(Integer.MAX_VALUE);
                 HelloStringCallback callback = new HelloStringCallback();
-//              CommonCallback callback=new CommonCallback();
                 asyncClient.helloString("baba", callback);
-                System.out.println("client async calls");
+
                 //等待触发回调
-                Thread.sleep(1000L);
+                Thread.currentThread().join();
 
 
             }

@@ -5,11 +5,12 @@ import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TNonblockingServer;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TThreadPoolServer;
+import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
+import org.apache.thrift.transport.TTransportFactory;
 
 public class HelloServiceServer {
 
@@ -30,8 +31,8 @@ public class HelloServiceServer {
                 TBinaryProtocol.Factory proFactory = new TBinaryProtocol.Factory();
                 // 关联处理器与 Hello 服务的实现
                 TProcessor processor = new HelloService.Processor(new HelloServiceImpl());
-                TServer server = new TThreadPoolServer(processor, serverTransport,
-                        proFactory);
+                TServer server = new TSimpleServer(processor, serverTransport,
+                        new TTransportFactory(), proFactory);
                 System.out.println("Start server on port 7911...");
                 server.serve();
             }

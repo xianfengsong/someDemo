@@ -18,6 +18,7 @@ public class CommonCallback implements AsyncMethodCallback {
     @Override
     public void onComplete(Object response) {
         this.response = response;
+        System.out.println(response);
     }
 
     @Override
