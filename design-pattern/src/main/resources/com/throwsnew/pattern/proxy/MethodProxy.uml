@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.springframework.cglib.proxy.MethodProxy</OriginalElement>
+  <nodes>
+    <node x="361.71940559440566" y="220.0">org.springframework.cglib.proxy.MethodInterceptor</node>
+    <node x="608.0777972027972" y="220.0">org.springframework.cglib.proxy.Enhancer</node>
+    <node x="759.0777972027972" y="220.0">com.throwsnew.pattern.proxy.DefaultServiceImpl</node>
+    <node x="158.0" y="90.0">org.springframework.cglib.proxy.MethodProxy.FastClassInfo</node>
+    <node x="141.125" y="220.0">org.springframework.cglib.proxy.MethodProxy</node>
+    <node x="555.1532634032635" y="90.0">org.springframework.cglib.proxy.Callback</node>
+    <node x="321.1573426573427" y="0.0">org.springframework.cglib.reflect.FastClass</node>
+    <node x="561.3125" y="320.0">com.throwsnew.pattern.proxy.cglibproxy.CgLibProxyTest</node>
+    <node x="0.0" y="90.0">org.springframework.cglib.proxy.MethodProxy.CreateInfo</node>
+    <node x="355.6875" y="90.0">org.springframework.cglib.reflect.FastClass.Generator</node>
+    <node x="836.1708916083917" y="90.0">com.throwsnew.pattern.proxy.Service</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.springframework.cglib.proxy.MethodProxy" target="org.springframework.cglib.reflect.FastClass">
+      <point x="70.90909090909088" y="-20.0" />
+      <point x="290.0340909090909" y="190.0" />
+      <point x="500.1875" y="190.0" />
+      <point x="500.1875" y="60.0" />
+      <point x="440.1573426573427" y="60.0" />
+      <point x="51.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodProxy" target="org.springframework.cglib.proxy.MethodProxy.CreateInfo">
+      <point x="-56.72727272727275" y="-20.0" />
+      <point x="162.39772727272725" y="190.0" />
+      <point x="51.75" y="190.0" />
+      <point x="-17.25" y="20.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.proxy.DefaultServiceImpl" target="com.throwsnew.pattern.proxy.Service">
+      <point x="0.0" y="-20.0" />
+      <point x="858.5777972027972" y="200.0" />
+      <point x="865.1708916083917" y="200.0" />
+      <point x="-29.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodProxy.CreateInfo" target="org.springframework.cglib.proxy.MethodProxy">
+      <point x="51.75" y="20.0" />
+      <point x="120.75" y="170.0" />
+      <point x="190.76136363636363" y="170.0" />
+      <point x="-28.363636363636374" y="-20.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.proxy.cglibproxy.CgLibProxyTest" target="org.springframework.cglib.proxy.Enhancer">
+      <point x="14.583333333333314" y="-20.0" />
+      <point x="663.3958333333334" y="280.0" />
+      <point x="706.3277972027972" y="280.0" />
+      <point x="32.75" y="20.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.proxy.cglibproxy.CgLibProxyTest" target="org.springframework.cglib.proxy.MethodInterceptor">
+      <point x="-43.75" y="-20.0" />
+      <point x="605.0625" y="290.0" />
+      <point x="459.21940559440566" y="290.0" />
+      <point x="0.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodProxy.FastClassInfo" target="org.springframework.cglib.proxy.MethodProxy">
+      <point x="61.125" y="20.0" />
+      <point x="300.625" y="160.0" />
+      <point x="247.48863636363637" y="160.0" />
+      <point x="28.363636363636374" y="-20.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.proxy.cglibproxy.CgLibProxyTest" target="com.throwsnew.pattern.proxy.DefaultServiceImpl">
+      <point x="43.75" y="-20.0" />
+      <point x="692.5625" y="290.0" />
+      <point x="858.5777972027972" y="290.0" />
+      <point x="0.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodProxy" target="org.springframework.cglib.reflect.FastClass.Generator">
+      <point x="42.545454545454504" y="-20.0" />
+      <point x="261.6704545454545" y="170.0" />
+      <point x="389.1875" y="170.0" />
+      <point x="-33.5" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.Enhancer" target="org.springframework.cglib.proxy.Callback">
+      <point x="-32.75" y="-20.0" />
+      <point x="640.8277972027972" y="200.0" />
+      <point x="618.1532634032635" y="200.0" />
+      <point x="0.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodProxy.FastClassInfo" target="org.springframework.cglib.reflect.FastClass">
+      <point x="0.0" y="-20.0" />
+      <point x="239.5" y="70.0" />
+      <point x="338.1573426573427" y="70.0" />
+      <point x="-51.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodInterceptor" target="org.springframework.cglib.proxy.Callback">
+      <point x="0.0" y="-20.0" />
+      <point x="459.21940559440566" y="200.0" />
+      <point x="576.1532634032635" y="200.0" />
+      <point x="-42.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.reflect.FastClass.Generator" target="org.springframework.cglib.reflect.FastClass">
+      <point x="-33.5" y="-20.0" />
+      <point x="389.1875" y="70.0" />
+      <point x="372.1573426573427" y="70.0" />
+      <point x="-17.0" y="20.0" />
+    </edge>
+    <edge source="org.springframework.cglib.proxy.MethodProxy" target="org.springframework.cglib.proxy.MethodProxy.FastClassInfo">
+      <point x="-14.181818181818244" y="-20.0" />
+      <point x="204.94318181818176" y="160.0" />
+      <point x="178.375" y="160.0" />
+      <point x="-61.125" y="20.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.proxy.cglibproxy.CgLibProxyTest" target="org.springframework.cglib.proxy.MethodProxy">
+      <point x="-72.91666666666674" y="-20.0" />
+      <point x="575.8958333333333" y="300.0" />
+      <point x="219.125" y="300.0" />
+      <point x="0.0" y="20.0" />
+    </edge>
+    <edge source="com.throwsnew.pattern.proxy.cglibproxy.CgLibProxyTest" target="com.throwsnew.pattern.proxy.Service">
+      <point x="72.91666666666669" y="-20.0" />
+      <point x="721.7291666666667" y="300.0" />
+      <point x="968.5777972027972" y="300.0" />
+      <point x="968.5777972027972" y="200.0" />
+      <point x="923.1708916083917" y="200.0" />
+      <point x="29.0" y="20.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="536.0" y="406.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

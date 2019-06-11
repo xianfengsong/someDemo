@@ -14,6 +14,7 @@ public class DefaultServiceImpl implements Service {
 
     @Override
     public Integer serve(int a, int b) {
+        System.out.println("serve");
         return a + b;
     }
 }

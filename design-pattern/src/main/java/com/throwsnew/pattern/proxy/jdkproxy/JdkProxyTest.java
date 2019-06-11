@@ -32,7 +32,7 @@ public class JdkProxyTest {
     public void testCreate() {
         serviceProxied = (Service) Proxy
                 .newProxyInstance(Service.class.getClassLoader(), new Class[]{Service.class},
-                        new ServiceProxy(new DefaultServiceImpl()));
+                        new ServiceProxyHandler(new DefaultServiceImpl()));
     }
 
 
@@ -40,11 +40,11 @@ public class JdkProxyTest {
         System.out.println(serviceProxied.serve());
     }
 
-    static class ServiceProxy implements InvocationHandler {
+    static class ServiceProxyHandler implements InvocationHandler {
 
         private Service serviceImpl;
 
-        ServiceProxy(Service serviceImpl) {
+        ServiceProxyHandler(Service serviceImpl) {
             this.serviceImpl = serviceImpl;
         }
 
