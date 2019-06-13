@@ -1,5 +1,6 @@
 package jdk8new;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import org.junit.Test;
  * date 19-4-24 下午3:18 <br/>
  * Desc: 测试lambda表达式用法
  */
-public class LambdaTest {
+public class StreamTest {
 
     private static final int TYPE_A = 1;
     private static final int TYPE_B = 2;
@@ -31,7 +32,37 @@ public class LambdaTest {
 
     }
 
+    /**
+     * 把多个stream()合并
+     */
+    @Test
+    public void testFlatMap() {
+        Item a = new Item("a", 12, TYPE_A);
+        Item b = new Item("b", 11, TYPE_A);
+        Item c = new Item("c", 9, TYPE_B);
+        WrapList w1 = new WrapList(Arrays.asList(a, b, c));
+        WrapList w2 = new WrapList(Arrays.asList(a, b, c));
+        List<WrapList> wrapListList = Arrays.asList(w1, w2);
+        List<Item> items = wrapListList.stream().flatMap(e -> e.getList().stream()).collect(Collectors.toList());
+        System.out.println(items);
+    }
 
+    private class WrapList {
+
+        List<Item> list = new ArrayList<>();
+
+        public WrapList(List<Item> list) {
+            this.list = list;
+        }
+
+        public List<Item> getList() {
+            return list;
+        }
+
+        public void setList(List<Item> list) {
+            this.list = list;
+        }
+    }
     private class Item {
 
         String name;
@@ -69,6 +100,15 @@ public class LambdaTest {
 
         public void setType(Integer type) {
             this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return "Item{" +
+                    "name='" + name + '\'' +
+                    ", value=" + value +
+                    ", type=" + type +
+                    '}';
         }
     }
 

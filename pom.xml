@@ -18,6 +18,7 @@
         <module>design-pattern</module>
         <module>spi-demo</module>
         <module>thrift-demo</module>
+        <module>disruptor-demo</module>
     </modules>
 
     <properties>
