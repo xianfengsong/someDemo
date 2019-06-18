@@ -1,5 +1,6 @@
 package concurrent.sytemproblem.falsesharing;
 
+import sun.misc.Contended;
 /**
  * author Xianfeng <br/>
  * date 19-6-13 下午8:15 <br/>
@@ -10,7 +11,7 @@ package concurrent.sytemproblem.falsesharing;
  */
 public final class FalseSharingRunner implements Runnable {
 
-    public final static int NUM_THREADS = 1; // change
+    public final static int NUM_THREADS = 4; // change
     public final static long ITERATIONS = 1000L * 1000L;
     private static VolatileLong[] longs = new VolatileLong[NUM_THREADS];
 
@@ -84,9 +85,15 @@ public final class FalseSharingRunner implements Runnable {
         }
     }
 
+    /**
+     * 避免伪共享，除了加padding(p1,p2,p3...)
+     * 在jdk8可以直接使用@Contended，并添加jvm参数 -XX:-RestrictContended，效果相同
+     */
+    @Contended
     public final static class VolatileLong {
 
         public volatile long value = 0L;
-        public long p1, p2, p3, p4, p5, p6; // comment out
+        //使用无意义的long填充cache line
+//        public long p1, p2, p3, p4, p5, p6; // comment out
     }
 }

@@ -71,7 +71,7 @@ public class ReactorBenchmarkTest {
         try {
             String arg = args[0];
             if (SERVER_MODE.equals(arg)) {
-                Thread server = new Thread(new AIOServer(CommonConstants.DEFAULT_PORT));
+                Thread server = new Thread(new AIOServer());
                 server.start();
             } else if (CLIENT_MODE.equals(arg)) {
                 ExecutorService executor= Executors.newFixedThreadPool(20);

@@ -28,6 +28,7 @@ public class AIOClient implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         asynchronousChannel.connect(SERVER_ADDR, asynchronousChannel, new ConnectCompleteHandler());
     }
@@ -37,6 +38,7 @@ public class AIOClient implements Runnable {
          * @param result     io操作得到的结果
          * @param attachment 对应channel指定的附件
          */
+        @Override
         public void completed(Void result, AsynchronousSocketChannel attachment) {
             try {
                 System.out.println("(Connect)Handle by " + Thread.currentThread().getName());
@@ -58,6 +60,7 @@ public class AIOClient implements Runnable {
 
         }
 
+        @Override
         public void failed(Throwable exc, AsynchronousSocketChannel attachment) {
             exc.printStackTrace();
         }
@@ -65,6 +68,7 @@ public class AIOClient implements Runnable {
 
     class WriteCompleteHandler implements CompletionHandler<Integer, AsynchronousSocketChannel> {
 
+        @Override
         public void completed(Integer result, AsynchronousSocketChannel attachment) {
             System.out.println("(Write) Handle by " + Thread.currentThread().getName());
             if (result > 0) {
@@ -77,12 +81,15 @@ public class AIOClient implements Runnable {
             }
         }
 
+        @Override
         public void failed(Throwable exc, AsynchronousSocketChannel attachment) {
             exc.printStackTrace();
         }
     }
 
     class ReadCompleteHandler implements CompletionHandler<Integer, ByteBuffer> {
+
+        @Override
         public void completed(Integer result, ByteBuffer attachment) {
             try {
                 System.out.println("(Read) Handle by " + Thread.currentThread().getName());
@@ -100,6 +107,7 @@ public class AIOClient implements Runnable {
             }
         }
 
+        @Override
         public void failed(Throwable exc, ByteBuffer attachment) {
             exc.printStackTrace();
         }
