@@ -17,22 +17,26 @@ import java.util.Set;
 /**
  * 通用的客户端
  */
-public class NIOClient implements Runnable {
+public class NIOEchoClient implements Runnable {
 
     private final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(
             CommonConstants.DEFAULT_PORT);
     private Selector selector;
     private SocketChannel channel;
 
-    public NIOClient() throws IOException {
-        selector = Selector.open();
+    public NIOEchoClient() {
+        try {
+            selector = Selector.open();
 
-        channel = SocketChannel.open();
-        channel.configureBlocking(false);
+            channel = SocketChannel.open();
+            channel.configureBlocking(false);
 
-        SelectionKey key = channel.register(selector, SelectionKey.OP_CONNECT);
+            SelectionKey key = channel.register(selector, SelectionKey.OP_CONNECT);
 //        key.interestOps(SelectionKey.OP_READ);
-        channel.connect(SERVER_ADDR);
+            channel.connect(SERVER_ADDR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -64,7 +68,6 @@ public class NIOClient implements Runnable {
             ByteBuffer sendBuffer = Utils.uft8Encoder.encode(CharBuffer.wrap(msg));
             int count = channel.write(sendBuffer);
             if (count == msg.length()) {
-                channel.shutdownOutput();
                 System.out.println("send:" + msg);
             } else {
                 System.out.println("send fail");
@@ -81,6 +84,7 @@ public class NIOClient implements Runnable {
                 int count = channel.read(input);
                 //-1表示channel传输结束
                 if (count == -1) {
+                    channel.shutdownOutput();
                     break;
                 }
                 //读取前翻转
@@ -88,6 +92,7 @@ public class NIOClient implements Runnable {
                 if (input.limit() != 0) {
                     CharBuffer charBuffer = Utils.uft8Decoder.decode(input);
                     System.out.println("recv:" + charBuffer);
+                    break;
                 }
             }
         }

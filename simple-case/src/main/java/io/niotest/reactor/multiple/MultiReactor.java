@@ -24,8 +24,8 @@ public class MultiReactor implements Runnable {
     private final ServerSocketChannel serverSocketChannel;
     private int next = 0;
 
-    public MultiReactor(int port) throws IOException {
-        selectors = new ArrayList<Selector>();
+    public MultiReactor() throws IOException {
+        selectors = new ArrayList<>();
         selectors.add(Selector.open());
         selectors.add(Selector.open());
         selectors.add(Selector.open());
@@ -81,12 +81,9 @@ public class MultiReactor implements Runnable {
                 SocketChannel channel = serverSocketChannel.accept();
 
                 if (channel != null) {
-                    System.out.println("server:accept connection");
                     //轮流选择selector
-                    new IOHandler(selectors.get(next), channel);
-                    if (++next == selectors.size() - 1) {
-                        next = 0;
-                    }
+                    new IOHandler(selectors.get(next % (selectors.size() - 1)), channel);
+                    next++;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
