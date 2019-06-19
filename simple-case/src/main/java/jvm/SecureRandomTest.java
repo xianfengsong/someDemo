@@ -29,7 +29,6 @@ public class SecureRandomTest {
         /**
          * 结果
          * Windows区别不明显 urandom 748ms random 795ms
-         *
          */
     }
 }
