@@ -10,32 +10,16 @@ import io.niotest.reactor.multiple.MultiReactor;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import org.junit.Before;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Param;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
  * nio reactor模式 性能测试
  *
  * @author xianfeng
  */
-@BenchmarkMode(Mode.SampleTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-@State(Scope.Thread)
 public class ReactorBenchmarkTest {
 
-    @Param({"200", "400", "800", "1000"})
     private int messageLength;
 
     /**
@@ -59,18 +43,7 @@ public class ReactorBenchmarkTest {
         }
     }
 
-    @Test
-    public void run() throws RunnerException {
-        Options opt = new OptionsBuilder()
-                .include(ReactorBenchmarkTest.class.getSimpleName())
-                .forks(1)
-                .warmupIterations(2)
-                .measurementIterations(10)
-                .build();
-        new Runner(opt).run();
-    }
-
-    @Setup
+    @Before
     public void startServer() {
         try {
             Thread server = new Thread(new MultiReactor());
@@ -80,10 +53,11 @@ public class ReactorBenchmarkTest {
         }
     }
 
-    @Benchmark
-    public void echo() {
+    @Test
+    public void run() {
         BlockingEchoClient client = new BlockingEchoClient(messageLength);
         Thread thread = new Thread(client);
         thread.start();
     }
+
 }

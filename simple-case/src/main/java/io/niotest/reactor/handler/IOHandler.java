@@ -11,7 +11,8 @@ import java.nio.channels.SocketChannel;
 /**
  * author Xianfeng <br/>
  * date 19-1-15 下午8:22 <br/>
- * Desc:
+ * Desc: IO处理类，有一个状态机State,初始状态是Read
+ * IOHandler作为selectionKey的附件，subSelector在监听到IO事件时，会调用
  */
 public class IOHandler implements Handler {
 
@@ -36,6 +37,9 @@ public class IOHandler implements Handler {
         state = new ReadState();
     }
 
+    /**
+     * 因为把IOHandler作为附件注册到了selectionKey，所以run()方法会在IO事件发生时被subSelector调用
+     */
     @Override
     public void run() {
         try {

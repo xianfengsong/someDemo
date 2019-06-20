@@ -1,4 +1,4 @@
-package concurrent.sytemproblem.falsesharing;
+package jvm.sytemproblem.falsesharing;
 
 import sun.misc.Contended;
 /**

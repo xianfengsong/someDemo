@@ -47,6 +47,7 @@ public class BlockingEchoClient implements Runnable {
             Assert.assertEquals(msg.toString(), response);
             buffer.clear();
             socketChannel.close();
+            System.out.println("exit!");
         } catch (IOException e) {
             e.printStackTrace();
         }

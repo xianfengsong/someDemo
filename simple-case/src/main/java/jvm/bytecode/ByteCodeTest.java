@@ -39,9 +39,11 @@ public class ByteCodeTest {
     /**
      * 测试switch-case
      */
-    @Test
+    @Test(expected = NullPointerException.class)
     public void test() {
         SwitchCaseTest.test(1);
+        //NPE
+        SwitchCaseTest.testString(null);
     }
 
     /**
