@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by Administrator on 2018-3-19 0019.
  */
-public class CurrentLinkQueueTest implements Test {
+public class ConcurrentLinkQueueTest implements Test {
 
     private static final int THREAD_NUM = 20;
 

@@ -1,7 +1,7 @@
 package concurrent;
 
 
-import concurrent.collections.CurrentLinkQueueTest;
+import concurrent.collections.ConcurrentLinkQueueTest;
 import concurrent.collections.QueueThroughputTest;
 import concurrent.collections.UnThreadsafeCollectionTest;
 import concurrent.tools.CountDownLatchTest;
@@ -48,7 +48,7 @@ public class Main {
                 UnThreadsafeCollectionTest.hashMapTest();
             }
             if(type.equals("queue")){
-                CurrentLinkQueueTest test=new CurrentLinkQueueTest();
+                ConcurrentLinkQueueTest test = new ConcurrentLinkQueueTest();
                 test.test();
             }
             if(type.equals("qt")){
