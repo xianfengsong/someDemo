@@ -20,6 +20,7 @@ public class PriorityQueueTest {
         PriorityQueue<Integer> queue = new PriorityQueue<>();
         queue.offer(6);
         queue.offer(4);
+        queue.offer(10);
         queue.offer(8);
         queue.offer(2);
         Assert.assertEquals("2在第一位", 2, queue.peek().intValue());
