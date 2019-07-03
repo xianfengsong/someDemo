@@ -105,7 +105,6 @@ public class CommandCircuitBreakerTest {
         cmd = new CommandConfigByCode(setter, 0, true);
         Assert.assertEquals("熔断之后直接返回fallback", "fallback", cmd.execute());
 
-
         //等待开关恢复到半开状态
         while (System.currentTimeMillis() - openTime < sleepWindowMs) {
             cmd = new CommandConfigByCode(setter, 0, true);

@@ -24,6 +24,7 @@ import org.mybatis.generator.config.TableConfiguration;
  * Desc: 生成构建需要的context
  */
 public class ContextBuilder {
+
     private String id;
     private ModelType modelType;
     private JDBCConnectionConfiguration jdbcConnectionConfiguration;
@@ -60,7 +61,7 @@ public class ContextBuilder {
         commentGeneratorConfiguration.addProperty("suppressDate", "true");
         this.commentGeneratorConfiguration = commentGeneratorConfiguration;
         //自定义类型转换处理类
-        JavaTypeResolverConfiguration typeResolverConfig=new JavaTypeResolverConfiguration();
+        JavaTypeResolverConfiguration typeResolverConfig = new JavaTypeResolverConfiguration();
         typeResolverConfig.setConfigurationType("tools.CustomTypeResolver");
         this.javaTypeResolverConfiguration = typeResolverConfig;
         //ExampleClass重命名
@@ -113,17 +114,20 @@ public class ContextBuilder {
         return this;
     }
 
-    public ContextBuilder setJavaTypeResolverConfiguration(JavaTypeResolverConfiguration javaTypeResolverConfiguration) {
+    public ContextBuilder setJavaTypeResolverConfiguration(
+            JavaTypeResolverConfiguration javaTypeResolverConfiguration) {
         this.javaTypeResolverConfiguration = javaTypeResolverConfiguration;
         return this;
     }
 
-    public ContextBuilder setJavaModelGeneratorConfiguration(JavaModelGeneratorConfiguration javaModelGeneratorConfiguration) {
+    public ContextBuilder setJavaModelGeneratorConfiguration(
+            JavaModelGeneratorConfiguration javaModelGeneratorConfiguration) {
         this.javaModelGeneratorConfiguration = javaModelGeneratorConfiguration;
         return this;
     }
 
-    public ContextBuilder setJavaClientGeneratorConfiguration(JavaClientGeneratorConfiguration javaClientGeneratorConfiguration) {
+    public ContextBuilder setJavaClientGeneratorConfiguration(
+            JavaClientGeneratorConfiguration javaClientGeneratorConfiguration) {
         this.javaClientGeneratorConfiguration = javaClientGeneratorConfiguration;
         return this;
     }
@@ -134,7 +138,8 @@ public class ContextBuilder {
     }
 
 
-    public ContextBuilder setCommentGeneratorConfiguration(CommentGeneratorConfiguration commentGeneratorConfiguration) {
+    public ContextBuilder setCommentGeneratorConfiguration(
+            CommentGeneratorConfiguration commentGeneratorConfiguration) {
         this.commentGeneratorConfiguration = commentGeneratorConfiguration;
         return this;
     }

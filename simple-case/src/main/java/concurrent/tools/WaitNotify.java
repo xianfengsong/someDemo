@@ -22,28 +22,45 @@ import java.util.concurrent.Executors;
  * 注意wait/notify的编程建议（condition的作用）
  */
 public class WaitNotify implements Test {
-    private final Object lock = new Object();
+
     /**
      * java doc的建议
      * 在使用wait/notify时，wait()方法要在循环中调用(等待的条件不满足时)
      */
     private static boolean condition = false;
+    private final Object lock = new Object();
+
+    public void test() {
+        Waiter waiter = new Waiter();
+        WaiterWithTimeout withTimeout = new WaiterWithTimeout();
+        ExecutorService exec = Executors.newFixedThreadPool(6);
+        for (int i = 0; i < 5; i++) {
+            if (i == 4) {
+                exec.execute(withTimeout);
+            } else {
+                exec.execute(waiter);
+            }
+        }
+        exec.execute(new Controller());
+        exec.shutdown();
+    }
 
     class Controller implements Runnable {
+
         public void run() {
             try {
                 Thread.sleep(100L);
                 System.out.println("Controller start ");
                 synchronized (lock) {
                     System.out.println("Controller get monitor");
-                    condition=true;
+                    condition = true;
                     //唤醒所有
 //                    lock.notifyAll();
                     //唤醒一个
                     lock.notify();
                     //继续占用这个monitor一会
-                    int i=2;
-                    while (i>0){
+                    int i = 2;
+                    while (i > 0) {
                         i--;
                         System.out.println("Controller running");
                         Thread.sleep(2000L);
@@ -58,13 +75,14 @@ public class WaitNotify implements Test {
     }
 
     class Waiter implements Runnable {
+
         public void run() {
             try {
                 String id = Thread.currentThread().getName();
                 System.out.println(id + " start");
                 synchronized (lock) {
 
-                    while (condition==false) {
+                    while (condition == false) {
                         System.out.println(id + " wait");
                         lock.wait();
                     }
@@ -76,14 +94,16 @@ public class WaitNotify implements Test {
             }
         }
     }
+
     class WaiterWithTimeout implements Runnable {
+
         public void run() {
             try {
-                String id = Thread.currentThread().getName()+"(WithTimeout)";
+                String id = Thread.currentThread().getName() + "(WithTimeout)";
                 System.out.println(id + " start ");
                 synchronized (lock) {
 
-                    while (condition==false) {
+                    while (condition == false) {
                         System.out.println(id + " wait");
                         lock.wait(400L);
                     }
@@ -95,20 +115,5 @@ public class WaitNotify implements Test {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void test() {
-        Waiter waiter = new Waiter();
-        WaiterWithTimeout  withTimeout= new WaiterWithTimeout();
-        ExecutorService exec = Executors.newFixedThreadPool(6);
-        for (int i = 0; i < 5; i++) {
-            if(i==4){
-                exec.execute(withTimeout);
-            }else {
-                exec.execute(waiter);
-            }
-        }
-        exec.execute(new Controller());
-        exec.shutdown();
     }
 }

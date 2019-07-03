@@ -18,48 +18,46 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ReentrantLockTest implements Test {
 
+    private final static int RUNNER_NUMBER = 20;
     ReentrantLockNew fairLock = new ReentrantLockNew(true);
     //默认就是unfair
     ReentrantLockNew unfairLock = new ReentrantLockNew();
     Condition conditionF = fairLock.newCondition();
 
-
-    private final static int RUNNER_NUMBER = 20;
-
-
-    private void startThread(boolean useFairLock) throws InterruptedException{
-        if(useFairLock){
+    private void startThread(boolean useFairLock) throws InterruptedException {
+        if (useFairLock) {
             System.out.println("公平锁：");
-        }else{
+        } else {
             System.out.println("非公平锁：");
         }
         //cache pool启动更快 增加线程竞争
         ExecutorService exec = Executors.newCachedThreadPool();
         for (int i = 0; i < RUNNER_NUMBER; i++) {
-            if(useFairLock){
+            if (useFairLock) {
                 Runner r = new Runner(fairLock, i);
                 exec.execute(r);
-            }else {
+            } else {
                 Runner r = new Runner(unfairLock, i);
                 exec.execute(r);
             }
         }
         exec.shutdown();
         exec.awaitTermination(100L, TimeUnit.SECONDS);
-        exec=null;
+        exec = null;
         System.gc();
     }
+
     public void test() throws InterruptedException {
         startThread(false);
 
         startThread(true);
-
 
         System.exit(0);
     }
 
 
     class Runner implements Runnable {
+
         private ReentrantLockNew lock;
         private int id;
 
@@ -69,11 +67,12 @@ public class ReentrantLockTest implements Test {
             this.id = id;
 
         }
-        void getLock(){
+
+        void getLock() {
             lock.lock();
             try {
 
-                System.out.println("lock by "+Thread.currentThread().getId()+" wait:"+lock.getQueuedThreadIds());
+                System.out.println("lock by " + Thread.currentThread().getId() + " wait:" + lock.getQueuedThreadIds());
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -91,19 +90,21 @@ public class ReentrantLockTest implements Test {
     /**
      * 为了顺序打印等待队列中的线程
      */
-    class ReentrantLockNew extends ReentrantLock{
-        public ReentrantLockNew(){
+    class ReentrantLockNew extends ReentrantLock {
+
+        public ReentrantLockNew() {
             super();
         }
 
-        public ReentrantLockNew(boolean isFair){
+        public ReentrantLockNew(boolean isFair) {
             super(isFair);
         }
-        public Collection<Long> getQueuedThreadIds(){
-            List<Thread> list=new ArrayList<Thread>(super.getQueuedThreads());
+
+        public Collection<Long> getQueuedThreadIds() {
+            List<Thread> list = new ArrayList<Thread>(super.getQueuedThreads());
             Collections.reverse(list);
-            List<Long> id=new ArrayList<Long>();
-            for(Thread t:list){
+            List<Long> id = new ArrayList<Long>();
+            for (Thread t : list) {
                 id.add(t.getId());
             }
             return id;

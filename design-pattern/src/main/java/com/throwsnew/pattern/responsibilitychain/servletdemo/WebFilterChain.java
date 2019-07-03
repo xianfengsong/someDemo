@@ -24,6 +24,7 @@ public class WebFilterChain implements FilterChain {
         this.filters = filters;
         this.servlet = servlet;
     }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
         if (currentIndex < filters.size()) {

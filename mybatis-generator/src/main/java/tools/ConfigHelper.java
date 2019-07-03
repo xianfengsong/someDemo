@@ -36,6 +36,7 @@ public class ConfigHelper {
             e.printStackTrace();
         }
     }
+
     /**
      * 获得数据库连接配置
      */

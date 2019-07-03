@@ -13,33 +13,7 @@ import org.junit.Test;
 public class ByteOperatorTest {
 
 
-
-    /**
-     * 测试thrift的变长整形编码方式
-     * org.apache.thrift.protocol.TCompactProtocol#writeVarint32(int)
-     */
-    @Test
-    public void testThriftVarint() {
-        writeVarint32(1025);
-    }
-
     private byte[] i32buf = new byte[5];
-    private void writeVarint32(int n) {
-        int idx = 0;
-        while (true) {
-            //0111_1111取反 1000_0000
-            if ((n & ~0x7F) == 0) {
-                i32buf[idx++] = (byte) n;
-                break;
-            } else {
-                //与0111_1111 或1000_0000
-                i32buf[idx++] = (byte) ((n & 0x7F) | 0x80);
-                n >>>= 7;
-            }
-        }
-        System.out
-                .println(String.format("[%d][%d][%d][%d][%d]", i32buf[0], i32buf[1], i32buf[2], i32buf[3], i32buf[4]));
-    }
 
     /**
      * 按照大端方式处理 高位放在内存低地址
@@ -56,6 +30,32 @@ public class ByteOperatorTest {
                 ((buf[1] & 0xff) << 16) |
                 ((buf[2] & 0xff) << 8) |
                 ((buf[3] & 0xff));
+    }
+
+    /**
+     * 测试thrift的变长整形编码方式
+     * org.apache.thrift.protocol.TCompactProtocol#writeVarint32(int)
+     */
+    @Test
+    public void testThriftVarint() {
+        writeVarint32(1025);
+    }
+
+    private void writeVarint32(int n) {
+        int idx = 0;
+        while (true) {
+            //0111_1111取反 1000_0000
+            if ((n & ~0x7F) == 0) {
+                i32buf[idx++] = (byte) n;
+                break;
+            } else {
+                //与0111_1111 或1000_0000
+                i32buf[idx++] = (byte) ((n & 0x7F) | 0x80);
+                n >>>= 7;
+            }
+        }
+        System.out
+                .println(String.format("[%d][%d][%d][%d][%d]", i32buf[0], i32buf[1], i32buf[2], i32buf[3], i32buf[4]));
     }
 
     //测试 int值按大端转成byte数组(4个字节)

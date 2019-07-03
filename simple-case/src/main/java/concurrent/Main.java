@@ -12,6 +12,7 @@ import concurrent.tools.ThreadClassLoaderTest;
 import concurrent.tools.WaitNotify;
 
 public class Main {
+
     public static void main(String[] args) {
         String type = args[0];
         try {
@@ -34,28 +35,28 @@ public class Main {
                 CyclicBarrierTest cb = new CyclicBarrierTest();
                 cb.test();
             }
-            if(type.equals("smp")){
-                SemaphoreTest t=new SemaphoreTest(true);
+            if (type.equals("smp")) {
+                SemaphoreTest t = new SemaphoreTest(true);
                 t.test();
             }
-            if(type.equals("thread")){
+            if (type.equals("thread")) {
 //                ThreadTest t=new ThreadTest();
 //                t.test();
-                ThreadClassLoaderTest threadClassLoaderTest=new ThreadClassLoaderTest();
+                ThreadClassLoaderTest threadClassLoaderTest = new ThreadClassLoaderTest();
                 threadClassLoaderTest.test();
             }
-            if(type.equals("hashmap")){
+            if (type.equals("hashmap")) {
                 UnThreadsafeCollectionTest.hashMapTest();
             }
-            if(type.equals("queue")){
+            if (type.equals("queue")) {
                 ConcurrentLinkQueueTest test = new ConcurrentLinkQueueTest();
                 test.test();
             }
-            if(type.equals("qt")){
-                QueueThroughputTest test=new QueueThroughputTest();
+            if (type.equals("qt")) {
+                QueueThroughputTest test = new QueueThroughputTest();
                 test.test();
             }
-        }   catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

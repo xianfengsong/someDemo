@@ -11,13 +11,14 @@ import java.util.zip.CRC32;
  * file input stream
  */
 public class InputStreamReader implements ReadFileTest {
+
     public Long checkSum(String filePath) {
-        File file=new File(filePath);
+        File file = new File(filePath);
         try {
-            InputStream in=new FileInputStream(file);
-            CRC32 crc32=new CRC32();
+            InputStream in = new FileInputStream(file);
+            CRC32 crc32 = new CRC32();
             int c;
-            while ((c=in.read())!=-1){
+            while ((c = in.read()) != -1) {
                 crc32.update(c);
             }
             return crc32.getValue();

@@ -31,10 +31,12 @@ import org.apache.lucene.util.Version;
  * 测试相似度 自定义
  */
 public class SimilarityTest {
+
     private static final String PATH = "/home/song/someDemo/index";
+    static Directory directory = new RAMDirectory();
     private static Analyzer zh = new MaxWordAnalyzer();
-    static Directory directory= new RAMDirectory();
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         try {
             write();
             search("三国 四国");
@@ -45,46 +47,49 @@ public class SimilarityTest {
         }
 
     }
+
     private static void search(String key) throws IOException, ParseException {
-        int hitsPerPage=10;
+        int hitsPerPage = 10;
         IndexReader reader = DirectoryReader.open(directory);
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(new CustomSimilarity());
-        Query q1= new QueryParser(Version.LUCENE_45,"title",zh).parse(key);
+        Query q1 = new QueryParser(Version.LUCENE_45, "title", zh).parse(key);
 //        q1.setBoost(10f);
-        Query q2=new QueryParser(Version.LUCENE_45,"content",zh).parse(key);
-        BooleanQuery q=new BooleanQuery();
+        Query q2 = new QueryParser(Version.LUCENE_45, "content", zh).parse(key);
+        BooleanQuery q = new BooleanQuery();
         q.add(q1, BooleanClause.Occur.SHOULD);
         q.add(q2, BooleanClause.Occur.SHOULD);
         System.out.println(q.toString());
         TopDocs docs = searcher.search(q, hitsPerPage);
         ScoreDoc[] hits = docs.scoreDocs;
-        for(int i=0;i<hits.length;i++){
-            Document d=searcher.doc(hits[i].doc);
-            System.out.println(searcher.explain(q,hits[i].doc));
-            System.out.println(hits[i].score+":"+d.get("title")+"\t"+d.get("content"));
+        for (int i = 0; i < hits.length; i++) {
+            Document d = searcher.doc(hits[i].doc);
+            System.out.println(searcher.explain(q, hits[i].doc));
+            System.out.println(hits[i].score + ":" + d.get("title") + "\t" + d.get("content"));
         }
     }
+
     private static void write() throws IOException {
-        IndexWriter writer=getIndexWriter();
+        IndexWriter writer = getIndexWriter();
         String[] titles = {"三国演义",
                 "三国无双",
                 "四国演义",
                 "水浒"};
-        String[] contents={"演动漫高清在线观看",
+        String[] contents = {"演动漫高清在线观看",
                 "东汉末年，山河动荡刘汉王朝气数将尽。内有十常侍颠倒黑白，祸乱朝纲。外有张氏兄弟高呼“苍天已死，黄巾",
                 "无双 ",
                 "虽然标题中没有：三国演义,三国演义,三国演义,三国演义,三国演义"
         };
-        for(int i=0;i<4;i++){
-            displayToken(titles[i],zh);
-            displayToken(contents[i],zh);
-            writer.addDocument(getDoc(titles[i],contents[i]));
+        for (int i = 0; i < 4; i++) {
+            displayToken(titles[i], zh);
+            displayToken(contents[i], zh);
+            writer.addDocument(getDoc(titles[i], contents[i]));
         }
         writer.commit();
         writer.close();
     }
-    public static void displayToken(String str, Analyzer analyzer){
+
+    public static void displayToken(String str, Analyzer analyzer) {
         try {
             //第一个参数只是标识性没有实际作用
             TokenStream stream = analyzer.tokenStream("", new StringReader(str));
@@ -95,15 +100,17 @@ public class SimilarityTest {
             CharTermAttribute chara = stream.addAttribute(CharTermAttribute.class);
             //获取当前分词的类型
             TypeAttribute typea = stream.addAttribute(TypeAttribute.class);
-            while(stream.incrementToken()){
-                System.out.println(chara+"\t[" + offseta.startOffset()+" - " + offseta.endOffset() + "]\t<" + typea +">");
+            while (stream.incrementToken()) {
+                System.out.println(
+                        chara + "\t[" + offseta.startOffset() + " - " + offseta.endOffset() + "]\t<" + typea + ">");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private static Document getDoc(String title,String content){
-        Document d=new Document();
+
+    private static Document getDoc(String title, String content) {
+        Document d = new Document();
         d.add(new TextField("title", title, Field.Store.YES));
         d.add(new TextField("content", content, Field.Store.YES));
         return d;

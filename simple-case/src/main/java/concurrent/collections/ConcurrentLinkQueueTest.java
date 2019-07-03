@@ -17,13 +17,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ConcurrentLinkQueueTest implements Test {
 
     private static final int THREAD_NUM = 20;
-
-    private volatile boolean writeFinish = false;
     ConcurrentLinkedQueue<Node> q = new ConcurrentLinkedQueue<Node>();
     Map<Node, String> map = new ConcurrentHashMap<Node, String>();
     AtomicInteger total = new AtomicInteger(0);
+    private volatile boolean writeFinish = false;
+
+    public void test() throws BrokenBarrierException, InterruptedException {
+        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
+        for (int i = 0; i < THREAD_NUM; i++) {
+            executorService.execute(new Writer());
+        }
+        ExecutorService readExec = Executors.newFixedThreadPool(10);
+        for (int i = 0; i < 10; i++) {
+            readExec.execute(new Reader());
+        }
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.DAYS);
+        writeFinish = true;
+        readExec.shutdown();
+        readExec.awaitTermination(1, TimeUnit.DAYS);
+        System.out.println("total:" + total.get());
+        if (total.get() != map.size()) {
+            System.out.println("size:" + map.size());
+            System.out.print("处理失败");
+        } else {
+            System.out.print("处理成功");
+        }
+    }
 
     class Writer implements Runnable {
+
         public void run() {
             try {
                 long threadId = Thread.currentThread().getId();
@@ -50,7 +73,9 @@ public class ConcurrentLinkQueueTest implements Test {
     }
 
     class Reader implements Runnable {
-        private final long SLEEP_TIME=100L;
+
+        private final long SLEEP_TIME = 100L;
+
         public void run() {
             while (!writeFinish) {
                 Node n = q.poll();
@@ -66,39 +91,17 @@ public class ConcurrentLinkQueueTest implements Test {
             //writeFinish和poll不是原子操作
             //poll结束 和 读writeFinish=true 的操作之间，可能q又被更新
             //(增加SLEEP_TIME复现bug)
-            if(!q.isEmpty()){
+            if (!q.isEmpty()) {
                 Node n;
-                while((n=q.poll())!=null){
-                    map.put(n,"");
+                while ((n = q.poll()) != null) {
+                    map.put(n, "");
                 }
             }
         }
     }
 
-    public void test() throws BrokenBarrierException, InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(THREAD_NUM);
-        for (int i = 0; i < THREAD_NUM; i++) {
-            executorService.execute(new Writer());
-        }
-        ExecutorService readExec = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 10; i++) {
-            readExec.execute(new Reader());
-        }
-        executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.DAYS);
-        writeFinish = true;
-        readExec.shutdown();
-        readExec.awaitTermination(1, TimeUnit.DAYS);
-        System.out.println("total:" + total.get());
-        if (total.get() != map.size()) {
-            System.out.println("size:" + map.size());
-            System.out.print("处理失败");
-        } else {
-            System.out.print("处理成功");
-        }
-    }
-
     class Node {
+
         long threadId;
         String id;
 

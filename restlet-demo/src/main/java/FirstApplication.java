@@ -1,4 +1,8 @@
-import org.restlet.*;
+import org.restlet.Application;
+import org.restlet.Component;
+import org.restlet.Request;
+import org.restlet.Response;
+import org.restlet.Restlet;
 import org.restlet.data.Protocol;
 import org.restlet.resource.Finder;
 import org.restlet.resource.ServerResource;
@@ -14,21 +18,6 @@ import resource.UsersResource;
  * Desc:
  */
 public class FirstApplication extends Application {
-    @Override
-    public Restlet createInboundRoot() {
-        Router router = new Router(getContext());
-        router.attach("/hello", HelloWorldResource.class);
-        //todo finder怎么用
-        Finder finder=new Finder(){
-            @Override
-            public ServerResource find(Request request, Response response) {
-                return super.find(request, response);
-            }
-        };
-        router.attach("/user", UsersResource.class);
-        router.attach("/user/{name}", UserResource.class);
-        return router;
-    }
 
     public static void main(String[] args) {
         try {
@@ -44,5 +33,21 @@ public class FirstApplication extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Restlet createInboundRoot() {
+        Router router = new Router(getContext());
+        router.attach("/hello", HelloWorldResource.class);
+        //todo finder怎么用
+        Finder finder = new Finder() {
+            @Override
+            public ServerResource find(Request request, Response response) {
+                return super.find(request, response);
+            }
+        };
+        router.attach("/user", UsersResource.class);
+        router.attach("/user/{name}", UserResource.class);
+        return router;
     }
 }

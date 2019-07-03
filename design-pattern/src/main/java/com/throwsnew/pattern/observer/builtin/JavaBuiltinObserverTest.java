@@ -66,7 +66,7 @@ public class JavaBuiltinObserverTest {
         Long start = System.currentTimeMillis();
         newsCenter.setNews(newsOne);
         Long time = System.currentTimeMillis() - start;
-        Assert.assertTrue(time >=3000L);
+        Assert.assertTrue(time >= 3000L);
     }
 
 }

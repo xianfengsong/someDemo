@@ -32,20 +32,20 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     /**
      * 聚合查询
-     db.user.aggregate([
-     {"$match" : { "userId" : "u1", "userType" : "TYPE" }},
-     { "$unwind" : "$orderList" },
-     { "$match" : { "orderList.createTime" : { "$lte" :  1545030349990}}},
-     { "$sort" : { "orderList.createTime" : -1 } },
-     {"$limit" : 100},
-     { "$group" : {
-     "_id" : "$_id",
-     "userType" : { "$last" : "$userType" },
-     "userId" : { "$last" : "$userId" },
-     "name" : { "$last" : "$name" },
-     "orderList" : { "$push" : "$orderList" }
-     }}
-     ])
+     * db.user.aggregate([
+     * {"$match" : { "userId" : "u1", "userType" : "TYPE" }},
+     * { "$unwind" : "$orderList" },
+     * { "$match" : { "orderList.createTime" : { "$lte" :  1545030349990}}},
+     * { "$sort" : { "orderList.createTime" : -1 } },
+     * {"$limit" : 100},
+     * { "$group" : {
+     * "_id" : "$_id",
+     * "userType" : { "$last" : "$userType" },
+     * "userId" : { "$last" : "$userId" },
+     * "name" : { "$last" : "$name" },
+     * "orderList" : { "$push" : "$orderList" }
+     * }}
+     * ])
      *
      * @param userId userId
      * @param userType userType
@@ -114,7 +114,6 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
         query.addCriteria(Criteria.where("userId").is(userId));
         query.addCriteria(Criteria.where("userType").is(userType));
         Update updateOld = new Update();
-
 
         updateOld.pull("orderList", Query.query(Criteria.where("_id").in(
                 ids)));

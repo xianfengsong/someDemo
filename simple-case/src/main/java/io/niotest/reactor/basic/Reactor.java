@@ -16,7 +16,6 @@ import java.util.Set;
  * * 问题：
  * 1. 怎么判断这次读取了channel中的全部数据，特别是数据大小超过buffer大小
  * 3. handle处理都是同步的，并发会出现什么问题
-
  */
 public class Reactor implements Runnable {
 

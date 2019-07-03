@@ -3,8 +3,6 @@ package resource;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
-import java.io.Serializable;
-
 /**
  * Created by Xianfeng
  * E-Mail: songxianfeng@
@@ -12,9 +10,10 @@ import java.io.Serializable;
  * Desc:
  */
 public class HelloWorldResource extends ServerResource {
+
     //设置media类型为文档
     @Get("txt")
-    public String represent(){
+    public String represent() {
         return "hello world";
     }
 }

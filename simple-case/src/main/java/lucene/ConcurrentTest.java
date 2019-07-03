@@ -38,6 +38,7 @@ import org.apache.lucene.util.Version;
  * Created by root on 18-3-22.
  */
 public class ConcurrentTest {
+
     private static final String PATH = "/home/song/someDemo/index";
     private static Analyzer zh = new ComplexAnalyzer();
     private static ReferenceManager<IndexSearcher> searcherManager;
@@ -51,19 +52,19 @@ public class ConcurrentTest {
 
             startDemonThread();
 
-            long start=System.currentTimeMillis();
-            ExecutorService ex= Executors.newFixedThreadPool(210);
-            for(int i=0;i<10;i++){
+            long start = System.currentTimeMillis();
+            ExecutorService ex = Executors.newFixedThreadPool(210);
+            for (int i = 0; i < 10; i++) {
                 ex.execute(new Writer(trackingIndexWriter.getIndexWriter()));
             }
             Thread.sleep(99L);
             searcherManager.maybeRefresh();
-            IndexSearcher searcher=searcherManager.acquire();
+            IndexSearcher searcher = searcherManager.acquire();
             //实时性验证
-            for(int i=0;i<200;i++){
+            for (int i = 0; i < 200; i++) {
                 //如果全部写完 666匹配的记录有10000条
                 //结果不是1000的整数倍 说明commit()前 就读到了数据
-                ex.execute(new Searcher(searcher,"666"));
+                ex.execute(new Searcher(searcher, "666"));
                 //等待索引更新一部分 希望 search能看到渐进的增长匹配数量
                 //但是 使用同一个searcher似乎看到的结果都是一样的
                 Thread.sleep(10);
@@ -72,13 +73,14 @@ public class ConcurrentTest {
 
             ex.shutdown();
             ex.awaitTermination(1, TimeUnit.DAYS);
-            System.out.println("用时："+(System.currentTimeMillis()-start));
+            System.out.println("用时：" + (System.currentTimeMillis() - start));
             trackingIndexWriter.getIndexWriter().close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private static void startDemonThread(){
+
+    private static void startDemonThread() {
         //=========================================================
         // This thread handles the actual reader reopening.
         //=========================================================
@@ -91,57 +93,6 @@ public class ConcurrentTest {
         nrtReopenThread.start();
     }
 
-    static class Writer implements Runnable {
-        IndexWriter writer;
-
-        public Writer(IndexWriter writer) {
-            this.writer = writer;
-        }
-        @Override
-        public void run() {
-            try {
-                writer.addDocuments(getDocs(500));
-                Thread.sleep(1000L);
-                writer.addDocuments(getDocs(500));
-                writer.commit();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    static class Searcher implements Runnable {
-        IndexSearcher searcher;
-        String query;
-
-        public Searcher(IndexSearcher searcher, String query) {
-            this.searcher = searcher;
-            this.query = query;
-        }
-        @Override
-        public void run() {
-            try {
-                BooleanQuery bq = new BooleanQuery();
-                Query q = new TermQuery(new Term("id", query));
-                Query qName = new QueryParser(Version.LUCENE_45, "name", zh).parse(query);
-                Query qC = new QueryParser(Version.LUCENE_45, "content", zh).parse(query);
-                bq.add(q, BooleanClause.Occur.SHOULD);
-                bq.add(qC, BooleanClause.Occur.SHOULD);
-                bq.add(qName, BooleanClause.Occur.SHOULD);
-                bq.setMinimumNumberShouldMatch(1);
-
-                TopDocs docs = searcher.search(bq, 10);
-//                System.out.println("Found " + docs.totalHits + " docs ");
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     static void query(String word) throws IOException, ParseException {
 
         IndexSearcher searcher = searcherManager.acquire();
@@ -156,21 +107,16 @@ public class ConcurrentTest {
 
         TopDocs docs = searcher.search(bq, 10);
         System.out.println("Found " + docs.totalHits + " docs ");
-        int loop=Math.min(10,docs.totalHits);
+        int loop = Math.min(10, docs.totalHits);
         for (int i = 0; i < loop; i++) {
             int id = docs.scoreDocs[i].doc;
             Document result = searcher.doc(id);
-            System.out.println("id:" + result.get("id") + " name:" + result.get("name") + " content:" + result.get("content"));
+            System.out.println(
+                    "id:" + result.get("id") + " name:" + result.get("name") + " content:" + result.get("content"));
         }
 
         searcherManager.release(searcher);
 
-    }
-    public void deleteDoc(Integer id) throws IOException {
-        TermQuery q = new TermQuery(new Term("id", id.toString()));
-//        TrackingIndexWriter writer = new TrackingIndexWriter(getIndexWriter());
-        trackingIndexWriter.deleteDocuments(q);
-        trackingIndexWriter.getIndexWriter().commit();
     }
 
     private static List<Document> getDocs(int number) {
@@ -209,5 +155,68 @@ public class ConcurrentTest {
         FSDirectory indexDir = FSDirectory.open(indexFile, new SimpleFSLockFactory());
         return new IndexWriter(indexDir, config);
 
+    }
+
+    public void deleteDoc(Integer id) throws IOException {
+        TermQuery q = new TermQuery(new Term("id", id.toString()));
+//        TrackingIndexWriter writer = new TrackingIndexWriter(getIndexWriter());
+        trackingIndexWriter.deleteDocuments(q);
+        trackingIndexWriter.getIndexWriter().commit();
+    }
+
+    static class Writer implements Runnable {
+
+        IndexWriter writer;
+
+        public Writer(IndexWriter writer) {
+            this.writer = writer;
+        }
+
+        @Override
+        public void run() {
+            try {
+                writer.addDocuments(getDocs(500));
+                Thread.sleep(1000L);
+                writer.addDocuments(getDocs(500));
+                writer.commit();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    static class Searcher implements Runnable {
+
+        IndexSearcher searcher;
+        String query;
+
+        public Searcher(IndexSearcher searcher, String query) {
+            this.searcher = searcher;
+            this.query = query;
+        }
+
+        @Override
+        public void run() {
+            try {
+                BooleanQuery bq = new BooleanQuery();
+                Query q = new TermQuery(new Term("id", query));
+                Query qName = new QueryParser(Version.LUCENE_45, "name", zh).parse(query);
+                Query qC = new QueryParser(Version.LUCENE_45, "content", zh).parse(query);
+                bq.add(q, BooleanClause.Occur.SHOULD);
+                bq.add(qC, BooleanClause.Occur.SHOULD);
+                bq.add(qName, BooleanClause.Occur.SHOULD);
+                bq.setMinimumNumberShouldMatch(1);
+
+                TopDocs docs = searcher.search(bq, 10);
+//                System.out.println("Found " + docs.totalHits + " docs ");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

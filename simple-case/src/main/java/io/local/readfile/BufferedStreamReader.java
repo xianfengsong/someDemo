@@ -11,12 +11,13 @@ import java.util.zip.CRC32;
  * BufferedInputStream
  */
 public class BufferedStreamReader implements ReadFileTest {
+
     public Long checkSum(String filePath) {
         try {
-            InputStream in=new BufferedInputStream(new FileInputStream(filePath));
-            CRC32 crc32=new CRC32();
+            InputStream in = new BufferedInputStream(new FileInputStream(filePath));
+            CRC32 crc32 = new CRC32();
             int c;
-            while ((c=in.read())!=-1){
+            while ((c = in.read()) != -1) {
                 crc32.update(c);
             }
             in.close();

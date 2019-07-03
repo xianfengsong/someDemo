@@ -27,12 +27,70 @@ public class QueueThroughputTest implements Test {
     static final String SOME_DATA = UUID.randomUUID().toString();
     static final int CAPACITY = THREAD_NUMBER * LOOP_PER_THREAD;
 
+    public void testPut(String type) throws InterruptedException {
+        BlockingQueue<String> q = null;
+        long s = System.nanoTime();
+        for (int j = 0; j < TEST_RUN_TIMES; j++) {
 
-    class NonBlockProducer implements Runnable{
-        private Queue<String> q=null;
-        public NonBlockProducer(Queue<String> q){
-            this.q=q;
+            if (type.equals("ArrayBlockingQueue")) {
+                q = new ArrayBlockingQueue<String>(CAPACITY);
+            }
+            if (type.equals("LinkedBlockQueue")) {
+                q = new LinkedBlockingQueue<String>(CAPACITY);
+            }
+            ExecutorService service = Executors.newFixedThreadPool(THREAD_NUMBER);
+            Producer p = new Producer(q);
+            for (int i = 0; i < THREAD_NUMBER; i++) {
+                service.execute(p);
+            }
+            service.shutdown();
+            service.awaitTermination(1, TimeUnit.DAYS);
+            service = null;
         }
+        long e = System.nanoTime();
+        System.out.println(type + ": avg() " + (e - s) / 1000000 / TEST_RUN_TIMES + " ms");
+    }
+
+    public void testOffer(String type) throws InterruptedException {
+        Queue<String> q = null;
+        long s = System.nanoTime();
+        for (int j = 0; j < TEST_RUN_TIMES; j++) {
+
+            if (type.equals("ConcurrentLinkedQueue")) {
+                q = new ConcurrentLinkedQueue<String>();
+            }
+            ExecutorService service = Executors.newFixedThreadPool(THREAD_NUMBER);
+            NonBlockProducer p = new NonBlockProducer(q);
+            for (int i = 0; i < THREAD_NUMBER; i++) {
+                service.execute(p);
+            }
+            service.shutdown();
+            service.awaitTermination(1, TimeUnit.DAYS);
+            service = null;
+        }
+        long e = System.nanoTime();
+        System.out.println(type + ": avg() " + (e - s) / 1000000 / TEST_RUN_TIMES + " ms");
+    }
+
+    public void test() throws BrokenBarrierException, InterruptedException {
+        System.out.println("put test 时间间隔 ms " + PRODUCE_TIME_SPAN);
+
+        testPut("ArrayBlockingQueue");
+        testPut("LinkedBlockQueue");
+
+        System.out.println("offer test 时间间隔 ms " + PRODUCE_TIME_SPAN);
+        testOffer("ConcurrentLinkedQueue");
+
+    }
+
+    class NonBlockProducer implements Runnable {
+
+        private Queue<String> q = null;
+
+        public NonBlockProducer(Queue<String> q) {
+            this.q = q;
+        }
+
         public void run() {
             Long threadId = Thread.currentThread().getId();
 
@@ -46,11 +104,15 @@ public class QueueThroughputTest implements Test {
             }
         }
     }
+
     class Producer implements Runnable {
-        private BlockingQueue<String> bq=null;
-        public Producer(BlockingQueue<String> bq){
-            this.bq=bq;
+
+        private BlockingQueue<String> bq = null;
+
+        public Producer(BlockingQueue<String> bq) {
+            this.bq = bq;
         }
+
         public void run() {
             Long threadId = Thread.currentThread().getId();
 
@@ -73,60 +135,6 @@ public class QueueThroughputTest implements Test {
     }
 
     class Element {
-
-    }
-
-    public void testPut(String type) throws InterruptedException {
-        BlockingQueue<String> q=null;
-        long s = System.nanoTime();
-        for (int j = 0; j < TEST_RUN_TIMES; j++) {
-
-            if(type.equals("ArrayBlockingQueue")){
-                q = new ArrayBlockingQueue<String>(CAPACITY);
-            }
-            if(type.equals("LinkedBlockQueue")){
-                q = new LinkedBlockingQueue<String>(CAPACITY);
-            }
-            ExecutorService service = Executors.newFixedThreadPool(THREAD_NUMBER);
-            Producer p = new Producer(q);
-            for (int i = 0; i < THREAD_NUMBER; i++) {
-                service.execute(p);
-            }
-            service.shutdown();
-            service.awaitTermination(1, TimeUnit.DAYS);
-            service=null;
-        }
-        long e = System.nanoTime();
-        System.out.println(type+": avg() " + (e - s) / 1000000 / TEST_RUN_TIMES + " ms");
-    }
-    public void testOffer(String type) throws InterruptedException {
-        Queue<String> q=null;
-        long s = System.nanoTime();
-        for (int j = 0; j < TEST_RUN_TIMES; j++) {
-
-            if(type.equals("ConcurrentLinkedQueue")){
-                q = new ConcurrentLinkedQueue<String>();
-            }
-            ExecutorService service = Executors.newFixedThreadPool(THREAD_NUMBER);
-            NonBlockProducer p = new NonBlockProducer(q);
-            for (int i = 0; i < THREAD_NUMBER; i++) {
-                service.execute(p);
-            }
-            service.shutdown();
-            service.awaitTermination(1, TimeUnit.DAYS);
-            service=null;
-        }
-        long e = System.nanoTime();
-        System.out.println(type+": avg() " + (e - s) / 1000000 / TEST_RUN_TIMES + " ms");
-    }
-    public void test() throws BrokenBarrierException, InterruptedException {
-        System.out.println("put test 时间间隔 ms "+PRODUCE_TIME_SPAN);
-
-        testPut("ArrayBlockingQueue");
-        testPut("LinkedBlockQueue");
-
-        System.out.println("offer test 时间间隔 ms "+PRODUCE_TIME_SPAN);
-        testOffer("ConcurrentLinkedQueue");
 
     }
 }

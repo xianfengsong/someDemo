@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
  * AIO 客户端
  */
 public class AIOClient implements Runnable {
-    private AsynchronousSocketChannel asynchronousChannel;
-    final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(CommonConstants.DEFAULT_PORT);
 
+    final static InetSocketAddress SERVER_ADDR = new InetSocketAddress(CommonConstants.DEFAULT_PORT);
     private static int clientNumber = 1;
     private final int id = clientNumber++;
+    private AsynchronousSocketChannel asynchronousChannel;
 
     public AIOClient() {
         try {
@@ -34,8 +34,9 @@ public class AIOClient implements Runnable {
     }
 
     class ConnectCompleteHandler implements CompletionHandler<Void, AsynchronousSocketChannel> {
+
         /**
-         * @param result     io操作得到的结果
+         * @param result io操作得到的结果
          * @param attachment 对应channel指定的附件
          */
         @Override
@@ -98,7 +99,7 @@ public class AIOClient implements Runnable {
                 if (result > 0) {
                     attachment.flip();
                     CharBuffer charBuffer = Utils.uft8Decoder.decode(attachment);
-                    System.out.println(id+"recv:" + charBuffer.toString());
+                    System.out.println(id + "recv:" + charBuffer.toString());
                 } else {
                     System.out.println("read nothing");
                 }

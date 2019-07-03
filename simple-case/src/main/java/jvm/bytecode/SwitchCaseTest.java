@@ -32,6 +32,7 @@ public class SwitchCaseTest {
                 System.out.println("default");
         }
     }
+
     public static void test(int value) {
         switch (value) {
             case 1:

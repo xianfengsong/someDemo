@@ -11,12 +11,13 @@ import org.mybatis.generator.internal.types.JavaTypeResolverDefaultImpl;
  * Desc: 自定义类型转换处理类
  */
 public class CustomTypeResolver extends JavaTypeResolverDefaultImpl {
-    public CustomTypeResolver(){
+
+    public CustomTypeResolver() {
         super();
         //对TINYINT类型，就直接用Int表示，代替Byte
         typeMap.put(Types.TINYINT, new JdbcTypeInformation("TINYINT",
                 new FullyQualifiedJavaType(Integer.class.getName())));
         //不强制转换成BigDecimal for DECIMAL and NUMERIC fields,使用Int,Long 等代替
-        properties.setProperty("forceBigDecimals","false");
+        properties.setProperty("forceBigDecimals", "false");
     }
 }

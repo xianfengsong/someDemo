@@ -18,9 +18,6 @@ public class ReadWithBuffer implements UpdateFileTest {
      * 修改匹配的内容
      * 然后写入新文件
      * 最后用新文件替换源文件
-     *
-     * @param target
-     * @param replace
      */
     public void updateFile(String target, String replace) {
         File file = new File(CommonConstants.FILE_PATH);

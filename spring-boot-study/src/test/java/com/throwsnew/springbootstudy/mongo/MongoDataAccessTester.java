@@ -20,13 +20,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = Application.class)
 public class MongoDataAccessTester {
 
-    @Autowired
-    UserRepository repository;
-
+    final static String USER_TYPE = "TYPE";
     private final static Integer ORDER_SIZE = 100;
     private final static Integer USER_NUMBER = 200;
-    final static String USER_TYPE = "TYPE";
     private final static Random RANDOM = new Random();
+    @Autowired
+    UserRepository repository;
 
     static List<Order> getOrders(int size) {
         List<Order> orders = new ArrayList<>();
@@ -83,6 +82,7 @@ public class MongoDataAccessTester {
         User user = repository.findOne(Example.of(example)).orElse(new User());
         System.out.println(JSON.toJSONString(user, false).getBytes().length / 1024 + "kb");
     }
+
     @Test
     public void clear() {
         repository.deleteAll();

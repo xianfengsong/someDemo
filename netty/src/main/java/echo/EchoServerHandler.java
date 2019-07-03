@@ -11,10 +11,9 @@ import java.nio.charset.Charset;
  * 处理入站事件（可读）的 handler
  */
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
+
     /**
      * 处理 read 事件
-     * @param ctx
-     * @param msg
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
@@ -40,9 +39,6 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     /**
      * 异常处理
-     * @param ctx
-     * @param cause
-     * @throws Exception
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

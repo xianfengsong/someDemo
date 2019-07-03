@@ -11,18 +11,21 @@ import org.apache.curator.test.TestingServer;
  * curator客户端测试
  */
 public class SimpleClient {
+
     private static final String REAL_SERVER = "192.168.185.153:2181,192.168.185.154:2181,10.252.112.209:2181";
 
-    private static CuratorFramework client=null;
+    private static CuratorFramework client = null;
+
     static {
 //        TestingServer server = new TestingServer(2181);
-        client=CuratorFrameworkFactory.builder()
+        client = CuratorFrameworkFactory.builder()
                 .connectString(REAL_SERVER)
                 .sessionTimeoutMs(5000)
                 .retryPolicy(new ExponentialBackoffRetry(1000, 3)).build();
 
     }
-    public static CuratorFramework getClient(){
+
+    public static CuratorFramework getClient() {
         return client;
     }
 
@@ -47,7 +50,7 @@ public class SimpleClient {
 //            QueueTest.test();
 
             client.start();
-            System.out.println( client.getChildren().forPath(QueueTest.PATH).toString());
+            System.out.println(client.getChildren().forPath(QueueTest.PATH).toString());
             List<String> children = client.getChildren().forPath(QueueTest.PATH);
             for (String s : children) {
                 System.out.println(s);

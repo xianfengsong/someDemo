@@ -25,6 +25,7 @@ public class Server implements Runnable {
     }
 
     static class Handler implements Runnable {
+
         final Socket socket;
 
         Handler(Socket s) {

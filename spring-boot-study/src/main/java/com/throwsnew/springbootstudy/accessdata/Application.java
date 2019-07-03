@@ -26,8 +26,6 @@ public class Application implements CommandLineRunner {
 
     /**
      * 保存 合并订单记录
-     *
-     * @param user
      */
     public void saveUser(User user) {
         List<Order> oldOrders = repository.findOne(Example.of(user))
@@ -44,6 +42,7 @@ public class Application implements CommandLineRunner {
         user.setOrderList(new ArrayList<>(combineById.values()));
         repository.save(user);
     }
+
     @Override
     public void run(String... args) throws Exception {
 

@@ -297,6 +297,9 @@ public class CacheTest {
 
     class Bean implements Cloneable {
 
+        String id;
+        Set<String> set = new HashSet<>();
+
         public Bean(String id, Set<String> set) {
             this.id = id;
             this.set = set;
@@ -322,9 +325,6 @@ public class CacheTest {
         public Set<String> getSet() {
             return set;
         }
-
-        String id;
-        Set<String> set = new HashSet<>();
 
         public void setSet(Set<String> set) {
             this.set = set;

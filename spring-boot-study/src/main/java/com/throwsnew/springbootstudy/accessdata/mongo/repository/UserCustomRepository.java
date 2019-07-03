@@ -29,6 +29,5 @@ public interface UserCustomRepository {
     User findUserBySlice(String userId, String userType, Integer size);
 
 
-
     void updateOrdersByPush(String userId, String userType, List<Order> orderList);
 }

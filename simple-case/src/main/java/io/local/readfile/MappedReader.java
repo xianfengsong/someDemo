@@ -9,14 +9,15 @@ import java.util.zip.CRC32;
 /**
  * MappedByteBuffer
  */
-public class MappedReader implements ReadFileTest{
+public class MappedReader implements ReadFileTest {
+
     public Long checkSum(String filePath) {
         try {
-            FileChannel channel=FileChannel.open(Paths.get(filePath));
-            CRC32 crc32=new CRC32();
-            MappedByteBuffer mappedByteBuffer=channel.map(FileChannel.MapMode.READ_ONLY,0,channel.size());
-            while (mappedByteBuffer.hasRemaining()){
-                int c=mappedByteBuffer.get();
+            FileChannel channel = FileChannel.open(Paths.get(filePath));
+            CRC32 crc32 = new CRC32();
+            MappedByteBuffer mappedByteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+            while (mappedByteBuffer.hasRemaining()) {
+                int c = mappedByteBuffer.get();
                 crc32.update(c);
             }
             channel.close();

@@ -31,7 +31,6 @@ public class Application {
         Configuration config = new Configuration();
         config.addContext(context);
 
-
         try {
             List<String> warnings = new ArrayList<String>();
             MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, null, warnings);

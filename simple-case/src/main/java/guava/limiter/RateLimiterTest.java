@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
  * guava RateLimiter 限流器测试
  */
 public class RateLimiterTest {
+
     private final static RateLimiter limiter = RateLimiter.create(10.0d);
 
     /**
@@ -18,7 +19,7 @@ public class RateLimiterTest {
         for (int i = 0; i < 50; i++) {
             //还能返回等待时间
             double waitTime = limiter.acquire();
-            System.out.println(new Date().getSeconds()+"  wait:"+waitTime);
+            System.out.println(new Date().getSeconds() + "  wait:" + waitTime);
         }
     }
 
@@ -41,21 +42,21 @@ public class RateLimiterTest {
      * 并不会因为acquire的数量超过令牌数就拒绝分配
      */
     private static void testAcquireMany() {
-        int [] acquireCount=new int[]{50,10,20,2};
-        for(int i=0;i<acquireCount.length;i++){
+        int[] acquireCount = new int[]{50, 10, 20, 2};
+        for (int i = 0; i < acquireCount.length; i++) {
             double waitTime = limiter.acquire(acquireCount[i]);
-            System.out.println(new Date().getTime() + " wait:" + waitTime+"s get:"+acquireCount[i]);
+            System.out.println(new Date().getTime() + " wait:" + waitTime + "s get:" + acquireCount[i]);
         }
     }
 
     /**
      *
      */
-    private static void warmUpTest(){
-        RateLimiter limiter=RateLimiter.create(10.0,5, TimeUnit.SECONDS);
-        for(int i=0;i<50;i++){
+    private static void warmUpTest() {
+        RateLimiter limiter = RateLimiter.create(10.0, 5, TimeUnit.SECONDS);
+        for (int i = 0; i < 50; i++) {
             double waitTime = limiter.acquire();
-            System.out.println(new Date().getSeconds()+" wait:"+waitTime);
+            System.out.println(new Date().getSeconds() + " wait:" + waitTime);
         }
     }
 

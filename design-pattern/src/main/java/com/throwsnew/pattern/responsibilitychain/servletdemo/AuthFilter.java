@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 public class AuthFilter implements Filter {
 
     FilterConfig filterConfig;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;

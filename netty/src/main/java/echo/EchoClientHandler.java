@@ -15,7 +15,6 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     /**
      * 处理connect事件
      * 连接成功就发送数据
-     * @param ctx
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
@@ -28,8 +27,6 @@ public class EchoClientHandler extends ChannelInboundHandlerAdapter {
     /**
      * 处理服务端发来的数据
      * 数据在这会被释放掉
-     * @param ctx
-     * @param msg
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {

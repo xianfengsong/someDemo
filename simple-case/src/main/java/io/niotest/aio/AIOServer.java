@@ -17,12 +17,14 @@ import java.util.concurrent.TimeUnit;
  * aio 服务端
  */
 public class AIOServer implements Runnable {
+
     private AsynchronousServerSocketChannel asynchronousChannel;
 
     public AIOServer() {
         try {
             //线程池的线程用来执行各种IO事件对应的handler
-            AsynchronousChannelGroup group = AsynchronousChannelGroup.withFixedThreadPool(10, Executors.defaultThreadFactory());
+            AsynchronousChannelGroup group = AsynchronousChannelGroup
+                    .withFixedThreadPool(10, Executors.defaultThreadFactory());
             asynchronousChannel = AsynchronousServerSocketChannel.open(group);
             asynchronousChannel.bind(new InetSocketAddress(CommonConstants.DEFAULT_PORT));
 
@@ -35,7 +37,7 @@ public class AIOServer implements Runnable {
     public void run() {
         try {
             asynchronousChannel.accept(asynchronousChannel, new AcceptCompleteHandler());
-            while (!Thread.interrupted()){
+            while (!Thread.interrupted()) {
                 //do something
                 Thread.sleep(1000L);
             }
@@ -47,10 +49,11 @@ public class AIOServer implements Runnable {
     /**
      * 接收连接的回调，发起读数据操作
      */
-    class AcceptCompleteHandler implements CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
+    class AcceptCompleteHandler implements
+            CompletionHandler<AsynchronousSocketChannel, AsynchronousServerSocketChannel> {
 
         /**
-         * @param result     io操作得到的结果
+         * @param result io操作得到的结果
          * @param attachment 对应channel指定的附件
          */
         @Override

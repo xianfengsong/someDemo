@@ -63,6 +63,7 @@ public class StreamTest {
             this.list = list;
         }
     }
+
     private class Item {
 
         String name;

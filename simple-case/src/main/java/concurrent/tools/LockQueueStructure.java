@@ -18,9 +18,35 @@ public class LockQueueStructure implements Test {
     static volatile int sharedVal = 0;
 
     /**
+     * 验证lock的作用
+     * 能否让runner以请求锁的顺序 同步执行
+     * 期待输出 123456789
+     */
+    public void test() {
+        try {
+            sharedVal = 0;
+            Lock lock = new CLHLock();
+//            Lock lock = new MCSLock();
+            int poolSize = 10;
+            ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
+            for (int i = 0; i < poolSize; i++) {
+                Runnable r = new Runner(lock, i);
+                //保证启动次序
+                Thread.sleep(100L);
+                executorService.execute(r);
+            }
+            executorService.awaitTermination(10L, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(sharedVal);
+    }
+
+    /**
      * 由锁来控制的runner
      */
     class Runner implements Runnable {
+
         private Lock lock;
         private int id;
 
@@ -41,31 +67,6 @@ public class LockQueueStructure implements Test {
             lock.unlock();
 
         }
-    }
-
-    /**
-     * 验证lock的作用
-     * 能否让runner以请求锁的顺序 同步执行
-     * 期待输出 123456789
-     */
-    public void test() {
-        try {
-            sharedVal=0;
-            Lock lock = new CLHLock();
-//            Lock lock = new MCSLock();
-            int poolSize = 10;
-            ExecutorService executorService = Executors.newFixedThreadPool(poolSize);
-            for (int i = 0; i < poolSize; i++) {
-                Runnable r = new Runner(lock, i);
-                //保证启动次序
-                Thread.sleep(100L);
-                executorService.execute(r);
-            }
-            executorService.awaitTermination(10L, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(sharedVal);
     }
 
     /**
@@ -111,7 +112,9 @@ public class LockQueueStructure implements Test {
 
             this.prev.set(prev);
             //自旋 等着前驱解锁
-            while (prev != null && prev.waitLock) ;
+            while (prev != null && prev.waitLock) {
+                ;
+            }
 
         }
 
@@ -122,26 +125,30 @@ public class LockQueueStructure implements Test {
             this.myNode.set(prev.get());
         }
 
+        public void lockInterruptibly() throws InterruptedException {
+
+        }
+
+        public boolean tryLock() {
+            return false;
+        }
+
+        public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+            return false;
+        }
+
+        public Condition newCondition() {
+            return null;
+        }
+
         /**
          * waitLock 表示节点锁定状态
          * true 表示需要锁（或已经得到锁）
          * false 表示不需要锁
          */
         class Node {
+
             volatile boolean waitLock;
-        }
-
-        public void lockInterruptibly() throws InterruptedException {
-
-        }
-        public boolean tryLock() {
-            return false;
-        }
-        public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-            return false;
-        }
-        public Condition newCondition() {
-            return null;
         }
     }
 
@@ -159,11 +166,11 @@ public class LockQueueStructure implements Test {
      */
     class MCSLock implements Lock {
 
-        AtomicReference<Node> tail=new AtomicReference<Node>();
         private final ThreadLocal<Node> myNode;
+        AtomicReference<Node> tail = new AtomicReference<Node>();
 
-        public MCSLock(){
-            myNode=new ThreadLocal<Node>(){
+        public MCSLock() {
+            myNode = new ThreadLocal<Node>() {
                 @Override
                 protected Node initialValue() {
                     return new Node();
@@ -172,59 +179,68 @@ public class LockQueueStructure implements Test {
         }
 
         public void lock() {
-            Node node=myNode.get();
+            Node node = myNode.get();
             /* 1 */
             //自旋直到接入队列
-            Node prev=tail.getAndSet(node);
-            if(prev!=null){
-                node.waitLock=true;
+            Node prev = tail.getAndSet(node);
+            if (prev != null) {
+                node.waitLock = true;
                 /* 2 */
                 //让前驱指向自己
-                prev.next=node;
+                prev.next = node;
                 /* 3 */
                 //等着前驱把我释放（只在自己节点变量自旋）
-                while(node.waitLock);
+                while (node.waitLock) {
+                    ;
+                }
             }
         }
 
         /**
-         *  步骤 4 和 1 产生竞争
-         *  竞争失败 步骤 5 等待  2 完成
-         *  步骤 6 解除 3 的自旋
+         * 步骤 4 和 1 产生竞争
+         * 竞争失败 步骤 5 等待  2 完成
+         * 步骤 6 解除 3 的自旋
          */
         public void unlock() {
-            Node node=myNode.get();
+            Node node = myNode.get();
             //如果此时是最后一个节点
-            if(node.next==null){
+            if (node.next == null) {
                 /* 4 */
                 //把tail改为null(cas防止这个瞬间还有节点接入队列)
-                if(tail.compareAndSet(node,null)){
+                if (tail.compareAndSet(node, null)) {
                     return;
                 }
                 /* 5 */
                 //cas失败 （自旋，等着后面的新节点更新本节点next引用指向它）
-                while (node.next==null);
+                while (node.next == null) {
+                    ;
+                }
             }
             /* 6 */
             //真的有next节点接入了，释放它的等待状态
-            node.next.waitLock=false;
-        }
-        class Node{
-            volatile boolean waitLock;
-            volatile Node next;
+            node.next.waitLock = false;
         }
 
         public void lockInterruptibly() throws InterruptedException {
 
         }
+
         public boolean tryLock() {
             return false;
         }
+
         public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
             return false;
         }
+
         public Condition newCondition() {
             return null;
+        }
+
+        class Node {
+
+            volatile boolean waitLock;
+            volatile Node next;
         }
     }
 

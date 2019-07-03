@@ -1,13 +1,13 @@
 package objectmethod;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CloneTest {
+
     @Test
     public void cloneEqual() throws CloneNotSupportedException {
         Myobj source = new Myobj();
@@ -30,6 +30,7 @@ public class CloneTest {
     }
 
     class Myobj implements Cloneable {
+
         String name;
         List<Myobj> children;
 

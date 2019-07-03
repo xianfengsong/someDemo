@@ -54,41 +54,6 @@ public class ValueTypeTest {
         param.setValue(2);
     }
 
-    class Param {
-
-        String name;
-        int value;
-
-        public Param(String name, int value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return "Param{" +
-                    "name='" + name + '\'' +
-                    ", value=" + value +
-                    '}';
-        }
-    }
-
     @Test
     public void swapIntegerTest() {
         Integer a = 1, b = 2;
@@ -125,5 +90,40 @@ public class ValueTypeTest {
         swap(a, b);
         System.out.println("a=" + a + ",b=" + b);
 
+    }
+
+    class Param {
+
+        String name;
+        int value;
+
+        public Param(String name, int value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return "Param{" +
+                    "name='" + name + '\'' +
+                    ", value=" + value +
+                    '}';
+        }
     }
 }

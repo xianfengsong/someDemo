@@ -1,11 +1,12 @@
 package resource;
 
-import org.restlet.representation.Representation;
-import org.restlet.resource.*;
-
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.restlet.resource.Delete;
+import org.restlet.resource.Get;
+import org.restlet.resource.ResourceException;
+import org.restlet.resource.ServerResource;
 
 /**
  * Created by Xianfeng
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 一类资源就是url不同就要创建多个resource？有点二
  */
 public class UserResource extends ServerResource {
+
     private Map<String, String> users;
     //url标记的请求参数，可以在doInit方法获得
     private String userName;
@@ -36,11 +38,10 @@ public class UserResource extends ServerResource {
     }
 
     @Delete
-    public String deleteUser(){
+    public String deleteUser() {
         users.remove(userName);
         return "success";
     }
-
 
 
 }

@@ -6,12 +6,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
 public class User {
+
+    List<Order> orderList;
     @Id
     private String _id;
     private String userId;
     private String userType;
     private String name;
-    List<Order> orderList;
 
     public String getUserId() {
         return userId;
