@@ -8,11 +8,11 @@ import org.junit.Test;
 /**
  * author Xianfeng <br/>
  * date 19-4-23 下午4:51 <br/>
- * Desc: 位运算符测试
+ * Desc: 用到位运算符的各种编码算法
  */
 public class ByteOperatorTest {
 
-    byte[] i32buf = new byte[5];
+
 
     /**
      * 测试thrift的变长整形编码方式
@@ -23,6 +23,7 @@ public class ByteOperatorTest {
         writeVarint32(1025);
     }
 
+    private byte[] i32buf = new byte[5];
     private void writeVarint32(int n) {
         int idx = 0;
         while (true) {
@@ -43,21 +44,21 @@ public class ByteOperatorTest {
     /**
      * 按照大端方式处理 高位放在内存低地址
      */
-    public static final void saveWithBigEnd(final int frameSize, final byte[] buf) {
+    private static void saveWithBigEnd(final int frameSize, final byte[] buf) {
         buf[0] = (byte) (0xff & (frameSize >> 24));
         buf[1] = (byte) (0xff & (frameSize >> 16));
         buf[2] = (byte) (0xff & (frameSize >> 8));
         buf[3] = (byte) (0xff & (frameSize));
     }
 
-    public static final int readBigEnd(final byte[] buf) {
+    private static int readBigEnd(final byte[] buf) {
         return ((buf[0] & 0xff) << 24) |
                 ((buf[1] & 0xff) << 16) |
                 ((buf[2] & 0xff) << 8) |
                 ((buf[3] & 0xff));
     }
 
-    //int值按大端转成byte数组(4个字节)
+    //测试 int值按大端转成byte数组(4个字节)
     @Test
     public void bigEndTest() {
         Integer source = 1024;
@@ -69,7 +70,7 @@ public class ByteOperatorTest {
     }
 
     /**
-     * java 默认小端存储
+     * 测试 java默认使用的小端存储
      */
     @Test
     public void localEndianness() {
@@ -80,7 +81,7 @@ public class ByteOperatorTest {
     }
 
     /**
-     * java ByteBuffer切换大小端
+     * 测试：java ByteBuffer切换大小端
      */
     @Test
     public void changeEndianness() {
