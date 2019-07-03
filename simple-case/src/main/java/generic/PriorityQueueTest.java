@@ -70,6 +70,7 @@ public class PriorityQueueTest {
                 priorityQueue.poll();
             }
         }
+
         Assert.assertEquals("9991是第10大", 9991, priorityQueue.peek().intValue());
     }
 }
