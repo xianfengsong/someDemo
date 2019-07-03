@@ -59,7 +59,7 @@ public class PriorityQueueTest {
         for (int i = 0; i < numbers.length; i++) {
             numbers[i] = 10000 - i;
         }
-        //第几大x
+        //第几大
         int k = 10;
         PriorityQueue<Integer> priorityQueue = new PriorityQueue<>(k);
         for (int number : numbers) {
