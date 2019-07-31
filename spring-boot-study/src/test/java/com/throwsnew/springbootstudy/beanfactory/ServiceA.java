@@ -10,10 +10,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ServiceA {
-
     @Autowired
     ServiceB serviceB;
-
     public ServiceA() {
         Thread.dumpStack();
     }

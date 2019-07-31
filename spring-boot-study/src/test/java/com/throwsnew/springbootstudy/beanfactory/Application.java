@@ -2,7 +2,6 @@ package com.throwsnew.springbootstudy.beanfactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 /**
  * author Xianfeng <br/>
@@ -12,14 +11,8 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class Application {
-
     @Autowired
     ServiceA serviceA;
-    @Bean
-    public Hello hello() {
-        return new Hello();
-    }
-
-    class Hello {
-    }
+    @Autowired
+    Hello hello;
 }

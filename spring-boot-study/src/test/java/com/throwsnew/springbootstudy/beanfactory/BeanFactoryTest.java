@@ -1,6 +1,6 @@
 package com.throwsnew.springbootstudy.beanfactory;
 
-import com.throwsnew.springbootstudy.beanfactory.Application.Hello;
+
 import org.junit.Test;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
