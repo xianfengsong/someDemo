@@ -29,6 +29,12 @@ public class BeanFactoryTest {
         beanFactory.getBean(Hello.class);
     }
 
+    //AnnotationConfigApplicationContext肯定找到这个bean
+    @Test
+    public void testRegisterBean() {
+        BeanFactory beanFactory = new AnnotationConfigApplicationContext(Hello.class);
+    }
+
     //加载一个循环引用的bean
     @Test
     public void testRef() {

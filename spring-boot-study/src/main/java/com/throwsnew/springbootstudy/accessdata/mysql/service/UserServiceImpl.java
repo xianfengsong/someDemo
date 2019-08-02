@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 /**
  * author Xianfeng <br/>
@@ -15,12 +16,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserMapper userMapper;
+
     @Autowired
-    UserMapper userMapper;
+    public UserServiceImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
 
     @Override
     public List<User> listUser() {
         return userMapper.listUser();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> listUserReadOnly() {
+        //暂停3秒 再次查询结果不变
+        List<User> usersBefore = userMapper.listUser();
+        try {
+            Thread.sleep(3000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<User> usersAfter = userMapper.listUser();
+        Assert.isTrue(usersAfter.size() == usersBefore.size());
+        Assert.isTrue(usersAfter.get(0).getId().equals(usersBefore.get(0).getId()));
+        return usersAfter;
     }
 
     @Override
@@ -34,6 +55,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void updateUsers(List<User> userList) {
+        userMapper.delete();
+        for (User user : userList) {
+            userMapper.insert(user);
+        }
+    }
+
+    @Transactional(rollbackFor = Throwable.class)
+    @Override
+    public void updateUsersFail(List<User> userList) {
         userMapper.delete();
         for (User user : userList) {
             userMapper.insert(user);

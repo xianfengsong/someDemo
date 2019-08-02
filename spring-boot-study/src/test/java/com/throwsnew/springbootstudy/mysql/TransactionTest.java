@@ -40,12 +40,35 @@ public class TransactionTest {
 
         userList.add(new User(30, "30"));
         try {
-            userService.updateUsers(userList);
+            userService.updateUsersFail(userList);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         userList = userService.listUser();
 
         Assert.assertEquals(2, userList.size());
+    }
+
+    /**
+     * 测试只读事务
+     * 读取的数据始终是事务开始时的状态
+     */
+    @Test
+    public void testReadOnly() throws InterruptedException {
+        //初始化两条
+        List<User> userList = new ArrayList<>();
+        userList.add(new User(10, "10"));
+        userList.add(new User(20, "20"));
+        userService.insert(userList);
+        //删除操作
+        Thread t = new Thread(() -> userService.delete());
+        List<User> usersSnapshot = userService.listUserReadOnly();
+        //只读事务执行过程中，执行删除
+        t.start();
+        t.join();
+        //只读事务读取的结果和删除前一致
+        Assert.assertEquals(userList.size(), usersSnapshot.size());
+        //再次查询，数据已被删除
+        Assert.assertEquals("再次查询数据应该已经改变", 0, userService.listUser().size());
     }
 }
