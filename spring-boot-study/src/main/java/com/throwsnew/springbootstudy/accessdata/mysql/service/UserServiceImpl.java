@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Throwable.class)
     @Override
     public void updateUsersFail(List<User> userList) {
-        userMapper.delete();
+        delete();
         for (User user : userList) {
             userMapper.insert(user);
         }
@@ -72,6 +72,7 @@ public class UserServiceImpl implements UserService {
         Integer i = Integer.valueOf("null");
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     @Override
     public void delete() {
         userMapper.delete();

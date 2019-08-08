@@ -3,6 +3,9 @@ package com.throwsnew.springbootstudy.mysql;
 import com.throwsnew.springbootstudy.accessdata.Application;
 import com.throwsnew.springbootstudy.accessdata.mysql.model.User;
 import com.throwsnew.springbootstudy.accessdata.mysql.service.UserService;
+import com.throwsnew.springbootstudy.mysql.propagation.MyTransactionManager;
+import com.throwsnew.springbootstudy.mysql.propagation.TestServiceImpl;
+import com.throwsnew.springbootstudy.mysql.propagation.TransactionServiceImpl;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Assert;
@@ -19,8 +22,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * Desc:
  */
 @RunWith(SpringRunner.class)
-
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = {Application.class, TransactionServiceImpl.class, TestServiceImpl.class,
+        MyTransactionManager.class})
 public class TransactionTest {
 
     @Autowired
@@ -71,4 +74,5 @@ public class TransactionTest {
         //再次查询，数据已被删除
         Assert.assertEquals("再次查询数据应该已经改变", 0, userService.listUser().size());
     }
+
 }
