@@ -1,4 +1,4 @@
-package com.throwsnew.springbootstudy.mysql.propagation;
+package com.throwsnew.springbootstudy.transaction.propagation;
 
 import org.springframework.transaction.annotation.Propagation;
 
