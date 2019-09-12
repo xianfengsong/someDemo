@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.Context;
+import org.mybatis.generator.config.PluginConfiguration;
 import tools.ConfigHelper;
 import tools.ContextBuilder;
 
@@ -17,6 +18,10 @@ public class Application {
     public static void main(String[] args) {
 
         ConfigHelper configHelper = new ConfigHelper();
+        //对应mybatis-config.xml文件中的<plugin>标签
+        PluginConfiguration pluginConfig = new PluginConfiguration();
+        //支持分页，会增加selectByExampleWithRowbounds方法
+        pluginConfig.setConfigurationType("org.mybatis.generator.plugins.RowBoundsPlugin");
         Context context = new ContextBuilder()
                 .setId("id")
                 .setJdbcConnectionConfiguration(configHelper.getJDBCConnectionConfiguration())
@@ -27,6 +32,7 @@ public class Application {
                 .setSqlMapGeneratorConfiguration(configHelper.getSqlMapGeneratorConfiguration())
                 .addTableConfigurations(configHelper.getTableConfiguration())
                 .setTargetRuntime(configHelper.getRuntime())
+                .addPluginConfiguration(pluginConfig)
                 .build();
         Configuration config = new Configuration();
         config.addContext(context);
