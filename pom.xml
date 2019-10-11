@@ -20,6 +20,7 @@
         <module>thrift-demo</module>
         <module>disruptor-demo</module>
         <module>resilience4j-demo</module>
+        <module>spring-cloud-study</module>
     </modules>
 
     <properties>

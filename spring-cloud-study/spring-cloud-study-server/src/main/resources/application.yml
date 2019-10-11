@@ -1,0 +1,15 @@
+eureka:
+  client:
+    service-url:
+      #服务注册中心的默认地址
+      defaultZone: http://peer1:8761/eureka/,http://peer1:8761/eureka/
+  instance:
+    #上次心跳发送多久后，这个实例被视为下线（默认90s,三个心跳时间）
+    lease-expiration-duration-in-seconds: 90
+    #向注册中心发送心跳消息的间隔(默认30s)
+    lease-renewal-interval-in-seconds: 30
+spring:
+  application:
+    name: service-server
+server:
+  port: 8080
