@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,16 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @SpringBootApplication
 @RestController
+@EnableFeignClients
 public class ClientApplication {
 
     /**
      * DiscoveryClient可以读取eureka上的信息
      */
     private final DiscoveryClient discoveryClient;
+    /**
+     * 调用其他服务
+     */
+    private final RestClient restClient;
 
     @Autowired
-    public ClientApplication(DiscoveryClient discoveryClient) {
+    public ClientApplication(DiscoveryClient discoveryClient,
+            RestClient restClient) {
         this.discoveryClient = discoveryClient;
+        this.restClient = restClient;
     }
 
     public static void main(String[] args) {
@@ -45,6 +54,13 @@ public class ClientApplication {
         msg.put("services", discoveryClient.getServices());
         msg.put("description", discoveryClient.description());
         msg.put("instances", discoveryClient.getInstances("service-server"));
+        return JSON.toJSON(msg);
+    }
+
+    @GetMapping(value = "/hello", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Object hello() {
+        Map<String, String> msg = new HashMap<>();
+        msg.put("msg from server", restClient.hello());
         return JSON.toJSON(msg);
     }
 }

@@ -16,3 +16,12 @@ spring:
     name: service-client
 server:
   port: 8081
+# feign client的默认配置
+# https://cloud.spring.io/spring-cloud-openfeign/reference/html/#spring-cloud-feign-overriding-defaults
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
