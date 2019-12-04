@@ -21,6 +21,7 @@
         <module>disruptor-demo</module>
         <module>resilience4j-demo</module>
         <module>spring-cloud-study</module>
+        <module>mockito-study</module>
     </modules>
 
     <properties>
