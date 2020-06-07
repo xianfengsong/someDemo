@@ -1,16 +1,12 @@
 package concurrent.lock;
 
-import java.util.concurrent.TimeUnit;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * author Xianfeng <br/>
@@ -38,7 +34,7 @@ public class SyncBenchMark {
      * SyncBenchMark.withoutLock:withoutLock·p0.99    sample       83.565          ms/op
      * SyncBenchMark.withoutLock:withoutLock·p0.999   sample       95.027          ms/op
      */
-//    @Benchmark
+    @Benchmark
     public void withoutLock() {
         for (int i = 0; i < Integer.MAX_VALUE - 2; i++) {
             value = value + 1;
