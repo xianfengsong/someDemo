@@ -1,20 +1,10 @@
 package jvm.gc;
 
+import java.util.concurrent.TimeUnit;
+
 public class CmsTester {
 
-    private static Byte[] live = new Byte[1];
-
-    private static void gc() {
-        System.gc();
-    }
-
-    private static void sleep(long i) {
-        try {
-            Thread.sleep(i);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
+    private static Byte[] live1;
 
     private static Byte[] getM(int m) {
         return new Byte[1024 * 1024 * m];
@@ -34,13 +24,12 @@ public class CmsTester {
      * -XX:CMSMaxAbortablePrecleanTime=5000
      */
     public static void main(String[] args) throws InterruptedException {
+        // why keeping major gc
         int i = 0;
-        while (i++ < 32) {
-            live = getM(4);
+        while (i++ < 20) {
+            live1 = getM(4);
         }
-        sleep(10000L);
-        System.gc();
-
+        TimeUnit.SECONDS.sleep(20);
 //        int i=0;
 //        while(i++<10){
 //            live = getM(8);
