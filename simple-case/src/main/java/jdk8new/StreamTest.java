@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.util.StringUtils;
 
 /**
  * author Xianfeng <br/>
@@ -19,6 +20,16 @@ public class StreamTest {
     private static final int TYPE_B = 2;
 
     //-----测试 stream()-----
+    @Test
+    public void count() {
+        List<String> list = new ArrayList<>();
+        list.add("hi");
+        list.add("");
+        list.add("");
+        long nonEmptyCount = list.stream().filter(StringUtils::hasText).count();
+        Assert.assertEquals(1L, nonEmptyCount);
+        System.out.println(list);
+    }
     @Test
     public void groupBy() {
         Item a = new Item("a", 12, TYPE_A);

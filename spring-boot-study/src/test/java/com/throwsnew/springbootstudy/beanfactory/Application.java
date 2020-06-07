@@ -1,7 +1,9 @@
 package com.throwsnew.springbootstudy.beanfactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 
 /**
  * author Xianfeng <br/>
@@ -9,15 +11,12 @@ import org.springframework.context.annotation.Bean;
  * Desc:
  */
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class})
 public class Application {
 
-    @Bean
-    public Hello hello() {
-        return new Hello();
-    }
-
-    public class Hello {
-
-    }
+    @Autowired
+    ServiceA serviceA;
+    @Autowired
+    Hello hello;
 }
