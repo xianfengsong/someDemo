@@ -1,9 +1,12 @@
 package jdk8new;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +23,22 @@ public class StreamTest {
     private static final int TYPE_B = 2;
 
     //-----测试 stream()-----
+
+    @Test
+    public void testSum(){
+        List<BigDecimal> data = new ArrayList<>();
+        data.add(new BigDecimal(1));
+        data.add(new BigDecimal(1));
+        data.add(new BigDecimal(1));
+        BigDecimal sum = data.stream().reduce(new BigDecimal(0),
+                BigDecimal::add);
+        System.out.println(sum);
+        Assert.assertEquals(new BigDecimal(3),sum);
+
+        //sum int
+       Assert.assertEquals(3, data.stream().mapToInt(e->e.intValue()).sum());
+    }
+
     @Test
     public void count() {
         List<String> list = new ArrayList<>();

@@ -16,7 +16,7 @@ public class ListenOverflowTest {
 
     @Before
     public void startServer() {
-        Thread t = new Thread(new Server(128));
+        Thread t = new Thread(new Server(10));
         t.start();
     }
 
@@ -27,12 +27,13 @@ public class ListenOverflowTest {
      */
     @Test
     public void startClient() throws InterruptedException {
-        int number = 100;
+        int number = 1000;
         int messageLen = 1000;
         ExecutorService exec = Executors.newFixedThreadPool(number);
         for (int i = 0; i < number * 10; i++) {
             exec.execute(new BlockingEchoClient(messageLen));
         }
+        Thread.sleep(1000L);
         exec.shutdown();
         exec.awaitTermination(1, TimeUnit.HOURS);
     }
