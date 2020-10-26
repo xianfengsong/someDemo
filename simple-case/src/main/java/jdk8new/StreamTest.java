@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,7 +21,6 @@ public class StreamTest {
     private static final int TYPE_B = 2;
 
     //-----测试 stream()-----
-
     @Test
     public void testSum(){
         List<BigDecimal> data = new ArrayList<>();
