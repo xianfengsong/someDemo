@@ -1,5 +1,6 @@
 package concurrent.futuretest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -145,6 +146,54 @@ public class CompletableFutureTest {
         Assert.assertTrue("时间不会超过3秒", time < 3000);
     }
 
+    /**
+     * 用错误的方式，等待多个线程结束
+     * 注意运行时间和串行一样
+     */
+    @Test
+    public void testCombineStreamWrong() {
+        Long start = System.currentTimeMillis();
+        List<Coder> coders = new ArrayList<Coder>() {{
+            add(new Coder("1"));
+            add(new Coder("2"));
+            add(new Coder("3"));
+        }};
+        List<Integer> result = coders.stream().map(c -> CompletableFuture.supplyAsync(() -> {
+            try {
+                return c.coding();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        })).map(CompletableFuture::join).collect(Collectors.toList());
+        System.out.println(System.currentTimeMillis() - start);
+        System.out.println(result);
+    }
+
+    /**
+     * 用正确的方式，等待多个线程结束
+     * 就是有点别扭
+     */
+    @Test
+    public void testCombineStream() {
+        Long start = System.currentTimeMillis();
+        List<Coder> coders = new ArrayList<Coder>() {{
+            add(new Coder("1"));
+            add(new Coder("2"));
+            add(new Coder("3"));
+        }};
+        List<CompletableFuture<Integer>> futures = coders.stream().map(c -> CompletableFuture.supplyAsync(() -> {
+            try {
+                return c.coding();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        })).collect(Collectors.toList());
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        System.out.println(System.currentTimeMillis() - start);
+        List<Integer> result = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+        System.out.println(result);
+    }
+
     private void doOtherThing() {
         System.out.println("slacking... waiting to go home");
     }
@@ -186,5 +235,17 @@ public class CompletableFutureTest {
             }
             return true;
         }
+    }
+
+    @Test
+    public void insert() {
+        List<String> list = new ArrayList<String>() {{
+            add("b");
+            add("d");
+        }};
+        list.add(0, "a");
+        list.add(2, "c");
+        System.out.println(list);
+        System.out.println(list.subList(0, 2));
     }
 }
