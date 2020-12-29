@@ -65,11 +65,12 @@ public class StreamTest {
     @Test
     public void testFlatMap() {
         Item a = new Item("a", 12, TYPE_A);
-        Item b = new Item("b", 11, TYPE_A);
         Item c = new Item("c", 9, TYPE_B);
-        WrapList w1 = new WrapList(Arrays.asList(a, b, c));
-        WrapList w2 = new WrapList(Arrays.asList(a, b, c));
+        WrapList w1 = new WrapList(Arrays.asList(a, c));
+        WrapList w2 = new WrapList(Arrays.asList(a, c));
+        //结构 [[a,c],[a,c]]
         List<WrapList> wrapListList = Arrays.asList(w1, w2);
+        //拆解结构为 [a,c,a,c]
         List<Item> items = wrapListList.stream().flatMap(e -> e.getList().stream()).collect(Collectors.toList());
         System.out.println(items);
     }
