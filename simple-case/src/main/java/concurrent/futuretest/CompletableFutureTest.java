@@ -1,15 +1,12 @@
 package concurrent.futuretest;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,13 +22,12 @@ public class CompletableFutureTest {
     /**
      * 测试普通用法，捕获线程内异常
      */
-    public Future<Integer> testNormalUsage() {
-        CompletableFuture<Integer> future = new CompletableFuture<>();
+    public Future<String> testNormalUsage() {
+        CompletableFuture<String> future = new CompletableFuture<>();
         new Thread(() -> {
-            Coder coder = new Coder();
+            Coder coder = new Coder(0);
             try {
-                Integer result = coder.coding();
-                future.complete(result);
+                future.complete(coder.coding());
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }
@@ -43,10 +39,11 @@ public class CompletableFutureTest {
      * 测试工厂方法创建，不用主动调用complete/completeExceptionally
      * 但是异常要转为unchecked exception
      */
-    public Future<Integer> testFactoryMethod() {
+    public CompletableFuture<String> testFactoryMethod(int name) {
         return CompletableFuture.supplyAsync(() -> {
+            //这里的代码会被commonPool中的线程执行
             try {
-                Coder coder = new Coder();
+                Coder coder = new Coder(name);
                 return coder.coding();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -55,117 +52,166 @@ public class CompletableFutureTest {
         });
     }
 
-    public Future<Integer> customThreadPool() {
+    public Future<String> customThreadPool() {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Coder coder = new Coder();
+                Coder coder = new Coder(0);
                 return coder.coding();
             } catch (InterruptedException e) {
-                e.printStackTrace();
-                return 0;
+                throw new RuntimeException(e);
             }
         }, executorService);
     }
 
-    @Test
-    public void testUsage() {
-        try {
-            //test normal
-//            Future<Integer> future = testNormalUsage();
-            //testFactoryMethod
-            Future<Integer> future = testFactoryMethod();
-            doOtherThing();
-            System.out.println("coding! lines=" + future.get(2, TimeUnit.SECONDS));
-        } catch (Exception e) {
-            System.out.println("got exception from future," + e.getMessage());
-            e.printStackTrace();
-        }
+    /**
+     * 异步方法执行失败,get会抛出ExecutionException异常
+     */
+    @Test(expected = ExecutionException.class)
+    public void testException() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            throw new RuntimeException("");
+        });
+        future.get();
     }
 
     /**
-     * 让coding/test两组异步任务按照串行顺序执行
+     * 使用join()等待所有任务完成,任务并发执行，用时小于串行时间
+     * (这种方式使用基础的Future也能实现)
      */
     @Test
-    public void testSerial() {
-        long start = System.nanoTime();
-        List<String> coders = Arrays.asList("a", "b", "c");
-        List<CompletableFuture<Boolean>> futures = coders.stream().map(Coder::new)
-                //coding
-                .map((coder) -> CompletableFuture.supplyAsync(() -> {
+    public void waitAllBasic() {
+        long start = System.currentTimeMillis();
+        List<CompletableFuture<String>> futures = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            CompletableFuture<String> future = testFactoryMethod(i);
+            futures.add(future);
+        }
+        // 使用join，功能和get一样，但是会用unchecked exception代替checked异常,
+        List<String> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+        long time = System.currentTimeMillis() - start;
+        System.out.println(results + " time=" + time);
+        Assert.assertTrue(time < 1000 * 2);
+    }
+
+    /**
+     * 使用allOf 等待future stream中的所有future返回结u个哦
+     */
+    @Test
+    public void waitAllStream() {
+        List<Coder> coders = new ArrayList<Coder>() {{
+            add(new Coder(1));
+            add(new Coder(2));
+        }};
+        //把参数流转成Future任务流并保存
+        CompletableFuture[] futures = coders.stream().map(coder ->
+                CompletableFuture.supplyAsync(() -> {
                     try {
                         return coder.coding();
                     } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeException();
                     }
-                }))
-                //when coding done,print
-                .map(future -> future.thenApply(i -> {
-                    System.out.println("apply,coding done,lines=" + i);
-                    return i;
-                }))
-                //when coding done,testing
-                .map(future -> future.thenCompose(i -> CompletableFuture.supplyAsync(() -> new Tester().testing(i))))
-                .collect(Collectors.toList());
-        List<Boolean> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
-        long time = (System.nanoTime() - start) / 1000_000;
-        System.out.println(results + " time=" + time);
+                })).map(future -> future.thenApply(this::codeReview))
+                .toArray(CompletableFuture[]::new);
+        //等待所有任务返回
+        CompletableFuture.allOf(futures).join();
     }
 
     /**
-     * 通过combine 等两个异步任务都返回
+     * 测试使用apply转换future返回的结果
+     * apply是在当前Future的执行线程内 同步调用的
+     * （单独使用apply感觉没什么用，结果转换可以放到task内部啊）
      */
     @Test
-    public void testParallel() throws InterruptedException, ExecutionException, TimeoutException {
-        Coder a = new Coder("a");
-        Coder b = new Coder("b");
-        Tester c = new Tester();
-        long start = System.nanoTime();
-        Boolean result = CompletableFuture.supplyAsync(() -> {
-            try {
-                int lines = a.coding();
-                System.out.println("a coding " + lines);
-                return lines;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }).thenCombine(CompletableFuture.supplyAsync(() -> {
-            try {
-                int lines = b.coding();
-                System.out.println("b coding " + lines);
-                return lines;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-        }), (aLines, bLines) -> c.testing(aLines + bLines)).get();
-        long time = (System.nanoTime() - start) / 1000_000;
-        System.out.println(result + " time=" + time);
-        Assert.assertTrue("时间不会超过3秒", time < 3000);
+    public void testApply() {
+        long start = System.currentTimeMillis();
+        List<CompletableFuture<String>> futures = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            //转换future结果
+            CompletableFuture<String> future = testFactoryMethod(i).thenApply(this::codeReview);
+            futures.add(future);
+        }
+        List<String> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+        long time = System.currentTimeMillis() - start;
+        System.out.println(results + " time=" + time);
+        Assert.assertTrue(time < 1000 * 2);
     }
 
-    private void doOtherThing() {
-        System.out.println("slacking... waiting to go home");
+    /**
+     * 使用compose将两个future任务组合到一个流水线中
+     * A.thenCompose(B) A的结果会作为B的输入
+     * thenCompose()的参数是能够返回completionStage的函数，而thenApply没有这个要求
+     */
+    @Test
+    public void testCompose() {
+        long start = System.currentTimeMillis();
+        List<CompletableFuture<String>> futures = new ArrayList<>();
+        //执行code->codeReview
+        for (int i = 0; i < 2; i++) {
+            //和codeReview组合
+            CompletableFuture<String> future = testFactoryMethod(i).thenCompose(
+                    result -> CompletableFuture.supplyAsync(() -> this.codeReview(result)));
+            futures.add(future);
+        }
+        List<String> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+
+        long time = System.currentTimeMillis() - start;
+        System.out.println(results + " time=" + time);
+        //code之后才会执行codeReview，所以时间大于2秒
+        Assert.assertTrue(time > 1000 * 2);
+    }
+
+    /**
+     * 使用combine将几个平行的任务结果合并处理
+     * 与compose不同，新任务不依赖上一个任务的结果
+     */
+    @Test
+    public void testCombine() {
+        long start = System.currentTimeMillis();
+        List<CompletableFuture<String>> futures = new ArrayList<>();
+        //执行code1&code2->codeReview
+        for (int i = 0; i < 2; i++) {
+            CompletableFuture<String> future = testFactoryMethod(i).thenCombine(
+                    //与新code任务组合
+                    testFactoryMethod(i * 2),
+                    //合并处理两个code任务的结果
+                    (code1, code2) -> this.codeReview(code1 + code2));
+            futures.add(future);
+        }
+        List<String> results = futures.stream().map(CompletableFuture::join).collect(Collectors.toList());
+
+        long time = System.currentTimeMillis() - start;
+        System.out.println(results + " time=" + time);
+        //被combine的任务是并行执行的，虽然执行两次code和一次review,但时间还是小于3秒
+        Assert.assertTrue(time < 1000 * 3);
+    }
+
+
+    /**
+     * 执行 code review 处理code
+     */
+    private String codeReview(String code) {
+        try {
+            Thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("oh, very good,coder=" + code + ",codeReview thread=" + Thread.currentThread().getId());
+        return "reviewed:" + code;
     }
 
     static class Coder {
 
-        Random random = new Random();
-        private String name;
+        private int name;
 
-        public Coder() {
-            this.name = "null";
-        }
-
-        public Coder(String name) {
+        public Coder(int name) {
             this.name = name;
         }
 
-        public Integer coding() throws InterruptedException {
+        public String coding() throws InterruptedException {
             try {
                 Thread.sleep(1000L);
-                return random.nextInt(1000);
+                return name + " done,thread=" + Thread.currentThread().getId();
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 throw e;
@@ -173,18 +219,15 @@ public class CompletableFutureTest {
         }
     }
 
-    static class Tester {
-
-        public Boolean testing(Integer codeLines) {
-            try {
-                Thread.sleep(1000L);
-                Boolean result = codeLines % 2 == 0;
-                System.out.println("lines:" + codeLines + " result:" + result);
-                return result;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
+    @Test
+    public void insert() {
+        List<String> list = new ArrayList<String>() {{
+            add("b");
+            add("d");
+        }};
+        list.add(0, "a");
+        list.add(2, "c");
+        System.out.println(list);
+        System.out.println(list.subList(0, 2));
     }
 }
