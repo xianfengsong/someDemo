@@ -1,7 +1,8 @@
 package concurrent.threadlocal;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * author Xianfeng <br/>
