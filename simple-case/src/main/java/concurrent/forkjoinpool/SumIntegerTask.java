@@ -11,11 +11,12 @@ import java.util.concurrent.RecursiveTask;
  * date 19-6-13 下午3:06 <br/>
  * Desc:
  * 对整形数组求和，超过4个，分散成子任务，有返回值
+ * bad case ! 使用时有问题
  */
 public class SumIntegerTask extends RecursiveTask<Integer> {
 
     private static final int THRESHOLD = 4;
-    private int[] arr;
+    private final int[] arr;
 
     public SumIntegerTask(int[] arr) {
         this.arr = arr;
@@ -25,6 +26,7 @@ public class SumIntegerTask extends RecursiveTask<Integer> {
     protected Integer compute() {
         if (arr.length > THRESHOLD) {
             //将子任务结果求和
+            //不建议在task内部调用ForkJoinTask的invoke方法
             return ForkJoinTask.invokeAll(createSubtasks())
                     .stream()
                     .mapToInt(ForkJoinTask::join)

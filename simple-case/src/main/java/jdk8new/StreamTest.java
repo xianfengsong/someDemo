@@ -1,5 +1,6 @@
 package jdk8new;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,21 @@ public class StreamTest {
     private static final int TYPE_B = 2;
 
     //-----测试 stream()-----
+    @Test
+    public void testSum(){
+        List<BigDecimal> data = new ArrayList<>();
+        data.add(new BigDecimal(1));
+        data.add(new BigDecimal(1));
+        data.add(new BigDecimal(1));
+        BigDecimal sum = data.stream().reduce(new BigDecimal(0),
+                BigDecimal::add);
+        System.out.println(sum);
+        Assert.assertEquals(new BigDecimal(3),sum);
+
+        //sum int
+       Assert.assertEquals(3, data.stream().mapToInt(e->e.intValue()).sum());
+    }
+
     @Test
     public void count() {
         List<String> list = new ArrayList<>();
@@ -49,11 +65,12 @@ public class StreamTest {
     @Test
     public void testFlatMap() {
         Item a = new Item("a", 12, TYPE_A);
-        Item b = new Item("b", 11, TYPE_A);
         Item c = new Item("c", 9, TYPE_B);
-        WrapList w1 = new WrapList(Arrays.asList(a, b, c));
-        WrapList w2 = new WrapList(Arrays.asList(a, b, c));
+        WrapList w1 = new WrapList(Arrays.asList(a, c));
+        WrapList w2 = new WrapList(Arrays.asList(a, c));
+        //结构 [[a,c],[a,c]]
         List<WrapList> wrapListList = Arrays.asList(w1, w2);
+        //拆解结构为 [a,c,a,c]
         List<Item> items = wrapListList.stream().flatMap(e -> e.getList().stream()).collect(Collectors.toList());
         System.out.println(items);
     }

@@ -13,11 +13,32 @@ import java.net.Socket;
  */
 public class Server implements Runnable {
 
+    private int backLogSize = 0;
+
+    public Server() {
+    }
+
+    public Server(int backLogSize) {
+        this.backLogSize = backLogSize;
+    }
+
+    public static void main(String[] args) {
+        Server server = new Server();
+        server.run();
+    }
+
+    @Override
     public void run() {
         try {
-            ServerSocket ss = new ServerSocket(DEFAULT_PORT);
+            if (backLogSize == 0) {
+                //default backlog
+                backLogSize = 50;
+            }
+            ServerSocket ss = new ServerSocket(DEFAULT_PORT, backLogSize);
+
             while (!Thread.interrupted()) {
-                new Thread(new Handler(ss.accept())).start();
+                Socket newConn = ss.accept();
+                new Thread(new Handler(newConn)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -32,6 +53,7 @@ public class Server implements Runnable {
             socket = s;
         }
 
+        @Override
         public void run() {
             try {
                 byte[] inputBuffer = new byte[BUFFER_SIZE];
@@ -45,7 +67,6 @@ public class Server implements Runnable {
 
         private byte[] process(byte[] data) {
             String dataString = new String(data);
-            dataString = "resp:" + dataString;
             return dataString.getBytes();
         }
     }

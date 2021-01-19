@@ -2,7 +2,7 @@ package concurrent.forkjoinpool;
 
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.LongStream;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -38,32 +38,74 @@ public class ForkJoinPoolTest {
     }
 
     /**
+     * 测试并行流/串行流
+     * java8 的并行流默认使用fork-join-pool中的线程
+     */
+    @Test
+    public void testParallelSum() {
+        long sum = 0;
+        for (int i = 0; i < 10; i++) {
+            StreamTest streamTest = new StreamTest(LongStream.range(1, 1000_0000 * i));
+            long start = System.nanoTime();
+            streamTest.parallelSum();
+            long time = (System.nanoTime() - start) / 1000_000;
+            sum += time;
+            System.out.println("parallelSum time:" + time);
+        }
+        System.out.println("avg time:" + (double) sum / 10);
+    }
+
+    /**
+     * 测试并行流/串行流
+     * java8 的并行流默认使用fork-join-pool中的线程
+     */
+    @Test
+    public void testSerialSum() {
+        long sum = 0;
+        for (int i = 0; i < 10; i++) {
+            StreamTest streamTest = new StreamTest(LongStream.range(1, 1000_0000 * i));
+            long start = System.nanoTime();
+            streamTest.serialSum();
+            long time = (System.nanoTime() - start) / 1000_000;
+            sum += time;
+            System.out.println("serialSum time:" + time);
+        }
+        System.out.println("avg time:" + (double) sum / 10);
+    }
+
+    /**
+     * 测试 stream 中出现异常，会中断未执行的任务
+     */
+    @Test
+    public void testExceptionStream() {
+        try {
+            StreamTest streamTest = new StreamTest(LongStream.range(1, 200));
+            long result = streamTest.exceptionParallelSum();
+            System.out.println(result);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 测试并行流，合并线程结果
+     */
+    @Test
+    public void testStream() {
+        long start = System.nanoTime();
+        StreamTest streamTest = new StreamTest(LongStream.range(1, 100));
+        String result = String.join(",", streamTest.parallelFilter());
+        long time = (System.nanoTime() - start) / 1000_000;
+        System.out.println("time:" + time + result);
+    }
+
+    /**
      * 测试使用无返回值的任务
      */
     @Test
     public void testRecursiveAction() {
         commonPool.invoke(new UpperStringAction("abcdefgh"));
-    }
-
-    /**
-     * 测试任务出现异常，ForkJoinPool不会退出,也不会获得异常
-     * 但是action能够获得异常啊(搞什么)
-     */
-    @Test
-    public void main() throws InterruptedException {
-        UpperStringAction action = new UpperStringAction(null);
-
-        commonPool.execute(action);
-        commonPool.shutdown();
-        commonPool.awaitTermination(1, TimeUnit.DAYS);
-
-        boolean fail = action.isCompletedAbnormally();
-        Assert.assertTrue("isCompletedAbnormally返回true", fail);
-        Throwable exception = action.getException();
-        Assert.assertEquals("java.lang.IllegalArgumentException: workload为空", exception.getMessage());
-
-        System.out.println("任务完成");
-        action.join();
     }
 
     /**
